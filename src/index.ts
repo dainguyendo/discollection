@@ -70,7 +70,7 @@ interface SimplifiedRelease {
 function formatRelease(release: any): SimplifiedRelease {
   const information = release.basic_information;
   const artist = Array.isArray(information?.artists)
-    ? information.artists[0]
+    ? information.artists.join(", ")
     : undefined;
   return {
     id: release.id,
@@ -187,14 +187,22 @@ program
 
     const table = chalkTable(
       options,
-      data.map((r) => ({
-        title: r.release.title,
-        artist: r.release.artist,
-      }))
+      data.map(toReleaseObject).sort(sortByArtist)
     );
 
     console.log(table);
   });
+
+  function toReleaseObject(r: any) {
+    return {
+      title: r.release.title,
+        artist: r.release.artist,
+    }
+  }
+
+  function sortByArtist(a: any, b: any) {
+    return a.artist.localeCompare(b.artist);
+  }
 
 program
   .command("style")
@@ -239,10 +247,7 @@ program
 
     const table = chalkTable(
       options,
-      data.map((r) => ({
-        title: r.release.title,
-        artist: r.release.artist,
-      }))
+      data.map(toReleaseObject).sort(sortByArtist)
     );
 
     console.log(table);
