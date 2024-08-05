@@ -1,1 +1,1 @@
-declare module 'chalk-table';
+declare module "chalk-table";

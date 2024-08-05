@@ -1,16 +1,25 @@
 {
   "name": "discollection",
   "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
+  "bin": {
+    "discollection": "./bin/run"
+  },
+  "directories": {
+    "lib": "src",
+    "bin": "bin"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
-    "start": "node --env-file=.env dist/index.js",
-    "dev": "pnpm run \"/dev:/\"",
-    "dev:node": "node --enable-source-maps --watch dist/index.js",
-    "dev:tsc": "tsc --watch --preserveWatchOutput",
-    "build": "tsc",
-    "studio": "npx prisma studio",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "compile": "tsc",
+    "format": "prettier . --check",
+    "format:fix": "prettier . --write",
+    "start": "tsx ./bin/run.ts",
+    "start:node": "node ./bin/run"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +27,14 @@
   "description": "",
   "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e",
   "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
     "@types/invariant": "^2.2.37",
+    "@types/lodash": "^4.17.7",
     "@types/node": "^22.0.0",
+    "prettier": "3.3.3",
     "prisma": "5.17.0",
+    "tsup": "^8.2.4",
+    "tsx": "^4.16.5",
     "typescript": "^5.5.4"
   },
   "dependencies": {
@@ -31,6 +45,7 @@
     "inquirer": "^10.1.2",
     "invariant": "^2.2.4",
     "ky": "^1.5.0",
+    "lodash": "^4.17.21",
     "tslog": "^4.9.3"
   }
 }
