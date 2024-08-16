@@ -27,7 +27,7 @@ export default (program: Command) => {
                 genre: true,
               },
             });
-            const genres = records.map((r) => r.genre);
+            const genres = records.map((r) => r.genre).sort();
 
             return genres;
           },

@@ -41,8 +41,28 @@ export default (program: Command) => {
           console.log(chalkTable(options, styles));
           break;
         }
-        default:
-          console.log(chalk.red("Invalid category argument"));
+        default: {
+          if (!category) {
+            const releases = await db.release.findMany();
+
+            const headers = {
+              leftPad: 2,
+              columns: [
+                { field: "artist", name: chalk.cyan("Artist") },
+                { field: "release", name: chalk.cyan("Release") },
+              ],
+            };
+
+            const formattedReleases = releases.map((r) => ({
+              artist: r.artist,
+              release: r.title,
+            }));
+
+            console.log(chalkTable(headers, formattedReleases));
+          } else {
+            console.log(chalk.red("Invalid category argument"));
+          }
+        }
       }
     });
 };

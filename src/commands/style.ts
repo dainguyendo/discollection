@@ -27,7 +27,7 @@ export default (program: Command) => {
                 style: true,
               },
             });
-            const styles = records.map((r) => r.style);
+            const styles = records.map((r) => r.style).sort();
 
             return styles;
           },
