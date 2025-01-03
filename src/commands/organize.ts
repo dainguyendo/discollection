@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { list } from "../api";
 import fs from "fs";
+import logger from "../logger";
 
 const lpRegex = /\bLP\b/;
 
@@ -17,140 +18,85 @@ export default (program: Command) => {
        *    if the release is not an LP, organize under the first Style.
        * Then within each Genre or Style, sort by Artist. And then by Title.
        */
-      const organization = {} as any;
+      const library = {} as any;
 
       //   const data = await list();
-      const data = JSON.parse(fs.readFileSync("collection.json", "utf-8"));
+      const collection = JSON.parse(
+        fs.readFileSync("collection.json", "utf-8"),
+      );
 
-      const sizeOrganization = categorizeBySize(data);
+      const formatsInCollection = findDistinctFormats(collection);
+      formatsInCollection.forEach((format) => {
+        library[format] = {};
+      });
 
-    //   data.forEach((release) => {
-    //     const { basic_information } = release;
-    //     const { formats } = basic_information;
-    //     const { name, descriptions } = formats[0];
+      collection.forEach((release: any) => {
+        const format = getReleaseFormat(release);
+        const genre = getReleaseGenre(release);
+        const style = getReleaseStyle(release);
 
-    //     if (name !== "Vinyl") {
-    //       return;
-    //     }
+        if (!library[format]) {
+          library[format] = {};
+        }
 
-    //     if (!descriptions) {
-    //       return;
-    //     }
-
-    //     const twelve = descriptions.some(twelveRegex.test.bind(twelveRegex));
-    //     const ten = descriptions.some(tenRegex.test.bind(tenRegex));
-    //     const seven = descriptions.some(sevenRegex.test.bind(sevenRegex));
-
-    //     switch (true) {
-    //       case twelve:
-    //         if (!organization["12"]) {
-    //           organization["12"] = [];
-    //         }
-
-    //         organization["12"].push(release);
-    //         break;
-    //       case ten:
-    //         if (!organization["10"]) {
-    //           organization["10"] = [];
-    //         }
-
-    //         organization["10"].push(release);
-    //         break;
-    //       case seven:
-    //         if (!organization["7"]) {
-    //           organization["7"] = [];
-    //         }
-
-    //         organization["7"].push(release);
-    //         break;
-    //       default:
-    //         if (!organization["other"]) {
-    //           organization["other"] = [];
-    //         }
-
-    //         organization["other"].push(release);
-    //         break;
-    //     }
-    //   });
-
-      Object.keys(organization).forEach((size) => {
-        const releases = organization[size];
-
-        releases.forEach((release) => {
-          const { basic_information } = release;
-          const { genres, styles } = basic_information;
-
-          const genre = genres[0];
-          const style = styles[0];
-
-          if (genre) {
-            if (!organization[genre]) {
-              organization[genre] = [];
+        switch (true) {
+          case Boolean(genre): {
+            if (!library[format][genre]) {
+              library[format][genre] = [];
             }
 
-            organization[genre].push(release);
-          } else if (style) {
-            if (!organization[style]) {
-              organization[style] = [];
-            }
-
-            organization[style].push(release);
-          } else {
-            if (!organization["other"]) {
-              organization["other"] = [];
-            }
-
-            organization["other"].push(release);
+            library[format][genre].push(release);
+            break;
           }
+          case Boolean(style): {
+            if (!library[format][style]) {
+              library[format][style] = [];
+            }
+
+            library[format][style].push(release);
+            break;
+          }
+          default: {
+            if (!library[format]["other"]) {
+              library[format]["other"] = [];
+            }
+
+            library[format]["other"].push(release);
+          }
+        }
+      });
+
+      
+
+      formatsInCollection.forEach((format) => {
+        const genresOrStyles = Object.keys(library[format]);
+        genresOrStyles.forEach((genreOrStyle) => {
+          const releases = library[format][genreOrStyle];
+          logger.info(`\n\n${format}, ${genreOrStyle}, ${releases.length}`);
         });
       });
 
-      Object.keys(organization).forEach((key) => {
-        const releases = organization[key];
-
-        releases.sort((a, b) => {
-          const artistA = a.basic_information.artists[0].name;
-          const artistB = b.basic_information.artists[0].name;
-
-          if (artistA < artistB) {
-            return -1;
-          }
-
-          if (artistA > artistB) {
-            return 1;
-          }
-
-          return 0;
-        });
-      });
-
-      //   fs.writeFileSync("collection.json", JSON.stringify(data, null, 2));
+      
       fs.writeFileSync(
         "organization.json",
-        JSON.stringify(organization, null, 2),
+        JSON.stringify(library, null, 2),
       );
     });
 };
 
-function categorizeBySize(data: any) {
-  const organization = {} as any;
+type Format = "12" | "10" | "7" | "other";
 
+function findDistinctFormats(data: any) {
   const twelveRegex = /\b12\b/;
   const tenRegex = /\b10\b/;
   const sevenRegex = /\b7\b/;
 
-  data.forEach((release) => {
+  const formatSet = new Set<Format>();
+
+  data.forEach((release: any) => {
     const { basic_information } = release;
     const { formats } = basic_information;
-    const { name, descriptions } = formats[0];
-
-    if (name !== "Vinyl") {
-      return;
-    }
-
-    if (!descriptions) {
-      return;
-    }
+    const { descriptions } = formats[0];
 
     const twelve = descriptions.some(twelveRegex.test.bind(twelveRegex));
     const ten = descriptions.some(tenRegex.test.bind(tenRegex));
@@ -158,43 +104,59 @@ function categorizeBySize(data: any) {
 
     switch (true) {
       case twelve:
-        if (!organization["12"]) {
-          organization["12"] = [];
-        }
-
-        organization["12"].push(release);
+        formatSet.add("12");
         break;
       case ten:
-        if (!organization["10"]) {
-          organization["10"] = [];
-        }
-
-        organization["10"].push(release);
+        formatSet.add("10");
         break;
       case seven:
-        if (!organization["7"]) {
-          organization["7"] = [];
-        }
-
-        organization["7"].push(release);
+        formatSet.add("7");
         break;
       default:
-        if (!organization["other"]) {
-          organization["other"] = [];
-        }
-
-        organization["other"].push(release);
+        formatSet.add("other");
         break;
     }
   });
 
-  console.log(
-    Object.entries(organization)
-      .map(([size, releases]) => {
-        return `${size}": ${releases.length}`;
-      })
-      .join("\n"),
-  );
-
-  return organization;
+  return Array.from(formatSet);
 }
+
+function getReleaseFormat(release: any): Format {
+  const { basic_information } = release;
+  const { formats } = basic_information;
+  const { descriptions } = formats[0];
+
+  const twelveRegex = /\b12\b/;
+  const tenRegex = /\b10\b/;
+  const sevenRegex = /\b7\b/;
+
+  const twelve = descriptions.some(twelveRegex.test.bind(twelveRegex));
+  const ten = descriptions.some(tenRegex.test.bind(tenRegex));
+  const seven = descriptions.some(sevenRegex.test.bind(sevenRegex));
+
+  switch (true) {
+    case twelve:
+      return "12";
+    case ten:
+      return "10";
+    case seven:
+      return "7";
+    default:
+      return "other";
+  }
+}
+
+function getReleaseGenre(release: any) {
+  const { basic_information } = release;
+  const { genres } = basic_information;
+
+  return genres[0];
+}
+
+function getReleaseStyle(release: any) {
+  const { basic_information } = release;
+  const { styles } = basic_information;
+
+  return styles[0];
+}
+
