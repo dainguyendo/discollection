@@ -3,6 +3,8 @@ import { Command } from "commander";
 import { PrismaClient } from "@prisma/client";
 import chalkTable from "chalk-table";
 import _ from "lodash";
+import { toReleaseObject } from "../utilities/formatter";
+import { sortByArtist } from "../utilities/sort";
 
 export default (program: Command) => {
   program
@@ -42,26 +44,17 @@ export default (program: Command) => {
           break;
         }
         default: {
-          if (!category) {
-            const releases = await db.release.findMany();
+          const options = {
+            leftPad: 2,
+            columns: [
+              { field: "title", name: chalk.cyan("Release") },
+              { field: "artist", name: chalk.magenta("Artist") },
+            ],
+          };
 
-            const headers = {
-              leftPad: 2,
-              columns: [
-                { field: "artist", name: chalk.cyan("Artist") },
-                { field: "release", name: chalk.cyan("Release") },
-              ],
-            };
-
-            const formattedReleases = releases.map((r) => ({
-              artist: r.artist,
-              release: r.title,
-            }));
-
-            console.log(chalkTable(headers, formattedReleases));
-          } else {
-            console.log(chalk.red("Invalid category argument"));
-          }
+          const data = await db.release.findMany();
+          const releases = data.map(toReleaseObject).sort(sortByArtist);
+          console.log(chalkTable(options, releases));
         }
       }
     });

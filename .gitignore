@@ -2,3 +2,6 @@ node_modules
 dist
 .env
 prisma/dev.db
+
+collection.json
+organization.json
