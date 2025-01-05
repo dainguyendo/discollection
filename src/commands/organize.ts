@@ -3,7 +3,10 @@ import { list } from "../api";
 import fs from "fs";
 import logger from "../logger";
 
+import groupBy from "lodash/groupBy";
+
 const lpRegex = /\bLP\b/;
+const albumRegex = /\bAlbum\b/;
 
 export default (program: Command) => {
   program
@@ -18,108 +21,106 @@ export default (program: Command) => {
        *    if the release is not an LP, organize under the first Style.
        * Then within each Genre or Style, sort by Artist. And then by Title.
        */
-      const library = {} as any;
 
-      //   const data = await list();
+      let library = {} as any;
+
+      // const data = await list();
+      // fs.writeFileSync("collection.json", JSON.stringify(data, null, 2));
+
       const collection = JSON.parse(
         fs.readFileSync("collection.json", "utf-8"),
       );
 
-      const formatsInCollection = findDistinctFormats(collection);
-      formatsInCollection.forEach((format) => {
-        library[format] = {};
-      });
+      const formatGrouping = groupBy(collection, getReleaseFormat);
 
-      collection.forEach((release: any) => {
-        const format = getReleaseFormat(release);
-        const genre = getReleaseGenre(release);
-        const style = getReleaseStyle(release);
+      Object.entries(formatGrouping).forEach(([format, releases]) => {
+        const genreGrouping = groupBy(releases, getReleaseGenre);
 
-        if (!library[format]) {
-          library[format] = {};
-        }
-
-        switch (true) {
-          case Boolean(genre): {
-            if (!library[format][genre]) {
-              library[format][genre] = [];
-            }
-
-            library[format][genre].push(release);
-            break;
+        Object.entries(genreGrouping).forEach(([genre, releases]) => {
+          if (releases.length > 15) {
+            // group into style
+            const styleGrouping = groupBy(releases, getReleaseStyle);
+            // sort by artist then title
+            const sorted = Object.entries(styleGrouping).reduce(
+              (acc, [style, releases]) => {
+                acc[style] = releases.sort(sortReleaseByArtist);
+                return acc;
+              },
+              {} as any,
+            );
+            // then attach to library
+            library[format] = {
+              ...library[format],
+              [genre]: sorted,
+            };
+          } else {
+            // sort by artist then title
+            const sorted = releases.sort(sortReleaseByArtist);
+            // then attach to library
+            library[format] = {
+              ...library[format],
+              [genre]: sorted,
+            };
           }
-          case Boolean(style): {
-            if (!library[format][style]) {
-              library[format][style] = [];
-            }
-
-            library[format][style].push(release);
-            break;
-          }
-          default: {
-            if (!library[format]["other"]) {
-              library[format]["other"] = [];
-            }
-
-            library[format]["other"].push(release);
-          }
-        }
-      });
-
-      
-
-      formatsInCollection.forEach((format) => {
-        const genresOrStyles = Object.keys(library[format]);
-        genresOrStyles.forEach((genreOrStyle) => {
-          const releases = library[format][genreOrStyle];
-          logger.info(`\n\n${format}, ${genreOrStyle}, ${releases.length}`);
         });
       });
 
-      
-      fs.writeFileSync(
-        "organization.json",
-        JSON.stringify(library, null, 2),
-      );
+      console.log({ library });
+      fs.writeFileSync("organization.json", JSON.stringify(library, null, 2));
     });
 };
 
-type Format = "12" | "10" | "7" | "other";
+function sortReleaseByArtist(a, b) {
+  const artistA = a.basic_information.artists[0].name;
+  const artistB = b.basic_information.artists[0].name;
 
-function findDistinctFormats(data: any) {
-  const twelveRegex = /\b12\b/;
-  const tenRegex = /\b10\b/;
-  const sevenRegex = /\b7\b/;
+  if (artistA < artistB) {
+    return -1;
+  }
 
-  const formatSet = new Set<Format>();
+  if (artistA > artistB) {
+    return 1;
+  }
 
-  data.forEach((release: any) => {
-    const { basic_information } = release;
-    const { formats } = basic_information;
-    const { descriptions } = formats[0];
-
-    const twelve = descriptions.some(twelveRegex.test.bind(twelveRegex));
-    const ten = descriptions.some(tenRegex.test.bind(tenRegex));
-    const seven = descriptions.some(sevenRegex.test.bind(sevenRegex));
-
-    switch (true) {
-      case twelve:
-        formatSet.add("12");
-        break;
-      case ten:
-        formatSet.add("10");
-        break;
-      case seven:
-        formatSet.add("7");
-        break;
-      default:
-        formatSet.add("other");
-        break;
-    }
-  });
-
-  return Array.from(formatSet);
+  return 0;
 }
+
+type Format = "12" | "10" | "7";
+
+// function findDistinctFormats(data: any) {
+//   const twelveRegex = /\b12\b/;
+//   const tenRegex = /\b10\b/;
+//   const sevenRegex = /\b7\b/;
+
+//   const formatSet = new Set<Format>();
+
+//   data.forEach((release: any) => {
+//     const { basic_information } = release;
+//     const { formats } = basic_information;
+//     const { descriptions } = formats[0];
+
+//     const twelve = descriptions.some(twelveRegex.test.bind(twelveRegex));
+//     const ten = descriptions.some(tenRegex.test.bind(tenRegex));
+//     const seven = descriptions.some(sevenRegex.test.bind(sevenRegex));
+
+//     switch (true) {
+//       case twelve:
+//         formatSet.add("12");
+//         break;
+//       case ten:
+//         formatSet.add("10");
+//         break;
+//       case seven:
+//         formatSet.add("7");
+//         break;
+//       default:
+//         formatSet.add("other");
+//         break;
+//     }
+//   });
+
+//   return Array.from(formatSet);
+// }
 
 function getReleaseFormat(release: any): Format {
   const { basic_information } = release;
@@ -134,15 +135,26 @@ function getReleaseFormat(release: any): Format {
   const ten = descriptions.some(tenRegex.test.bind(tenRegex));
   const seven = descriptions.some(sevenRegex.test.bind(sevenRegex));
 
+  const album = descriptions.some(albumRegex.test.bind(albumRegex));
+  const lp = descriptions.some(lpRegex.test.bind(lpRegex));
+
   switch (true) {
+    // Consider LPs and Albums as 12"
     case twelve:
+    case album:
+    case lp:
       return "12";
     case ten:
       return "10";
     case seven:
       return "7";
-    default:
-      return "other";
+    default: {
+      logger.error("Unknown format. Manually check the release.", {
+        release: getReleaseTitleAndArtist(release),
+      });
+
+      throw new Error("Unknown format");
+    }
   }
 }
 
@@ -160,3 +172,9 @@ function getReleaseStyle(release: any) {
   return styles[0];
 }
 
+function getReleaseTitleAndArtist(release: any) {
+  const { basic_information } = release;
+  const { title, artists } = basic_information;
+
+  return `${artists[0].name} - ${title}`;
+}
