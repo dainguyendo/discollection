@@ -1,5 +1,6 @@
 import ky from "ky";
 import logger from "./logger";
+import { GetReleasesResponse, Release } from "./types";
 
 const user = process.env["DISCOGS_USER"];
 const folder = process.env["DISCOGS_FOLDER_ID"];
@@ -19,12 +20,10 @@ const api = ky.extend({
   },
 });
 
-type Release = any;
+export async function list(): Promise<GetReleasesResponse["releases"]> {
+  let list: Array<Release> = [];
 
-export async function list(): Promise<Array<Release>> {
-    let list: Array<Release> = [];
-
-    let url = `https://api.discogs.com/users/${user}/collection/folders/${folder}/releases`;
+  let url = `https://api.discogs.com/users/${user}/collection/folders/${folder}/releases`;
 
   try {
     do {
@@ -44,11 +43,9 @@ export async function list(): Promise<Array<Release>> {
     } while (url);
 
     logger.info("Finished processing", { total: list.length });
-
-    
   } catch (error) {
     logger.error(error);
   }
-  
+
   return list;
 }
