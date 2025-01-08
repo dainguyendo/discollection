@@ -1,25 +1,7 @@
 import { Command } from "commander";
-import ky from "ky";
 import db from "../db";
 import logger from "../logger";
-
-const user = process.env["DISCOGS_USER"];
-const folder = process.env["DISCOGS_FOLDER_ID"];
-const userAgent = `${user}_${folder}_app`;
-
-const api = ky.extend({
-  hooks: {
-    beforeRequest: [
-      (request) => {
-        const token = process.env["DISCOGS_PERSONAL_ACCESS_TOKEN"] || "";
-
-        request.headers.set("User-Agent", userAgent);
-        request.headers.set("Content-Type", "application/json");
-        request.headers.set("Authorization", `Discogs token=${token}`);
-      },
-    ],
-  },
-});
+import { list } from "../api";
 
 interface SimplifiedRelease {
   id: number;
@@ -32,7 +14,7 @@ interface SimplifiedRelease {
 function formatRelease(release: any): SimplifiedRelease {
   const information = release.basic_information;
   const artist = Array.isArray(information?.artists)
-    ? information.artists.join(", ")
+    ? information.artists.map((a: any) => a.name).join(", ")
     : undefined;
   return {
     id: release.id,
@@ -89,23 +71,11 @@ async function syncRelease(release: SimplifiedRelease) {
 }
 
 async function sync() {
-  let url = `https://api.discogs.com/users/${user}/collection/folders/${folder}/releases`;
-
   try {
-    do {
-      const response = await api.get(url);
-      const data = await response.json<any>();
-      const { pagination, releases } = data;
+    const releases = await list();
+    await Promise.all(releases.map(formatRelease).map(syncRelease));
 
-      logger.info("Fetched page of collection", { pagination });
-
-      url = pagination?.urls?.next;
-
-      await Promise.all(releases.map(formatRelease).map(syncRelease));
-      await new Promise((r) => setTimeout(r, 750));
-
-      logger.info("Processed page", { page: pagination.page });
-    } while (url);
+    logger.info("Finished syncing", { total: releases.length });
   } catch (error) {
     logger.error(error);
   }
@@ -114,7 +84,7 @@ async function sync() {
 export default (program: Command) => {
   program
     .command("sync")
-    .description("Sync Discog collection")
+    .description("Sync Discogs collection")
     .action(async () => {
       try {
         await sync();

@@ -4,6 +4,7 @@ import sync from "./commands/sync";
 import list from "./commands/list";
 import genre from "./commands/genre";
 import style from "./commands/style";
+import organize from "./commands/organize";
 
 invariant(
   process.env["DISCOGS_PERSONAL_ACCESS_TOKEN"],
@@ -17,13 +18,14 @@ function main() {
 
   program
     .name("disc")
-    .description("CLI to Dai's discog collection")
+    .description("CLI to Dai's Discogs collection")
     .version("0.8.0");
 
   sync(program);
   list(program);
   genre(program);
   style(program);
+  organize(program);
 
   return program;
 }
