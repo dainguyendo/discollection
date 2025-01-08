@@ -4,7 +4,7 @@ import fs from "fs";
 import logger from "../logger";
 
 import groupBy from "lodash/groupBy";
-import { GetReleasesResponse, Release } from "../types";
+import { Configuration, GetReleasesResponse, Release } from "../types";
 import { sortReleaseByArtist } from "../utilities/sort";
 
 const lpRegex = /\bLP\b/;
@@ -15,71 +15,55 @@ export default (program: Command) => {
     .command("organize")
     .argument("<output>", "Out file destination")
     .option("--cache", "Use cache", false)
-    .option(
-      "--style-grouping-minimum [number]",
-      "Minimum number of releases to group by style",
-      "15",
-    )
+    .option("--config [path]", "Path to config file")
     .description("(opinionated) Organize the collection")
     .action(async (output, options) => {
       logger.info("Organizing collection", { options });
 
-      const styleGroupingMinimum = parseInt(options.styleGroupingMinimum, 10);
-
       let library = {} as any;
+      let config: Configuration | undefined;
 
       let collection: GetReleasesResponse["releases"];
-
       if (options.cache) {
         collection = JSON.parse(
-          fs.readFileSync("collection.json", "utf-8"),
+          fs.readFileSync("cache.json", "utf-8"),
         ) as GetReleasesResponse["releases"];
       } else {
         collection = await list();
 
-        fs.writeFileSync(
-          "collection.json",
-          JSON.stringify(collection, null, 2),
-        );
+        fs.writeFileSync("cache.json", JSON.stringify(collection, null, 2));
 
         logger.info("Fetched collection", { total: collection.length });
         logger.info("Saved collection to cache");
       }
 
+      if (options.config) {
+        logger.info("Using config file", { path: options.config });
+        config = JSON.parse(fs.readFileSync(options.config, "utf-8"));
+      }
+
       const formatGrouping = groupBy(collection, getReleaseFormat);
 
       Object.entries(formatGrouping).forEach(([format, releases]) => {
-        const genreGrouping = groupBy(releases, getReleaseGenre);
+        const genreGrouping = groupBy(releases, (release) =>
+          getReleaseGenre(release, 0, config),
+        );
 
         Object.entries(genreGrouping).forEach(([genre, releases]) => {
-          if (releases.length > styleGroupingMinimum) {
-            const styleGrouping = groupBy(releases, getReleaseStyle);
+          if (config?.subgroup.includes(genre)) {
+            const styleGrouping = groupBy(releases, (release) =>
+              getReleaseStyle(release, 0, config),
+            );
 
-            /**
-             * Once broken down by stlye, for styles with less than 2 releases,
-             * regroup by selecting the second style list if it exists.
-             */
-            Object.entries(styleGrouping).forEach(([_style, releases]) => {
-              if (releases.length < 3) {
-                releases.forEach((release) => {
-                  const firstStyle = getReleaseStyle(release, 0) || "";
-                  const secondStyle = getReleaseStyle(release, 1);
+            // If all styles have 1 release, regroup under the genre
+            if (Object.values(styleGrouping).every((r) => r.length === 1)) {
+              library[format] = {
+                ...library[format],
+                [genre]: releases.sort(sortReleaseByArtist),
+              };
 
-                  if (secondStyle && firstStyle !== secondStyle) {
-                    if (styleGrouping[secondStyle]) {
-                      styleGrouping[secondStyle] = [
-                        ...styleGrouping[secondStyle],
-                        release,
-                      ];
-                    } else {
-                      styleGrouping[secondStyle] = [release];
-                    }
-
-                    delete styleGrouping[firstStyle];
-                  }
-                });
-              }
-            });
+              return;
+            }
 
             const sorted = Object.entries(styleGrouping).reduce(
               (acc, [style, releases]) => {
@@ -157,16 +141,24 @@ function getReleaseFormat(release: any): Format {
   }
 }
 
-function getReleaseGenre(release: Release, idx = 0) {
+function getReleaseGenre(release: Release, idx = 0, config?: Configuration) {
   const { basic_information } = release;
-  const { genres } = basic_information;
+  const { genres, id } = basic_information;
+
+  if (config?.genre[id]) {
+    return config.genre[id];
+  }
 
   return genres[idx];
 }
 
-function getReleaseStyle(release: Release, idx = 0) {
+function getReleaseStyle(release: Release, idx = 0, config?: Configuration) {
   const { basic_information } = release;
-  const { styles } = basic_information;
+  const { styles, id } = basic_information;
+
+  if (config?.style[id]) {
+    return config.style[id];
+  }
 
   return styles[idx];
 }

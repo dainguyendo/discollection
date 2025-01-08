@@ -5,3 +5,5 @@ prisma/dev.db
 
 collection.json
 organization.json
+config.organize.json
+cache.json

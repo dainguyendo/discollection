@@ -44,3 +44,9 @@ export type Release = {
 export type GetReleasesResponse = {
   releases: Array<Release>;
 };
+
+export type Configuration = {
+  subgroup: Array<string>;
+  genre: Record<string, string>;
+  style: Record<string, string>;
+};
