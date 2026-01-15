@@ -160,7 +160,11 @@ function getReleaseStyle(release: Release, idx = 0, config?: Configuration) {
     return config.style[id];
   }
 
-  return styles[idx];
+  const style = styles[idx];
+
+  const consolidationConfig = config?.consolidate || {};
+
+  return style ? consolidationConfig[style] || style : undefined;
 }
 
 function getReleaseTitleAndArtist(release: Release) {

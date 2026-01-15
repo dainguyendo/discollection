@@ -47,6 +47,7 @@ export type GetReleasesResponse = {
 
 export type Configuration = {
   subgroup: Array<string>;
+  consolidate?: Record<string, string>;
   genre: Record<string, string>;
   style: Record<string, string>;
 };
