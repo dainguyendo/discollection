@@ -1,13 +1,6 @@
 import { cac } from "cac";
-import invariant from "invariant";
 import { organizeAction } from "./commands/organize";
-
-invariant(
-  process.env["DISCOGS_PERSONAL_ACCESS_TOKEN"],
-  "Missing Discogs access token. See https://www.discogs.com/settings/developers",
-);
-invariant(process.env["DISCOGS_USER"], "Missing Discogs user");
-invariant(process.env["DISCOGS_FOLDER_ID"], "Missing folder ID");
+import { dbDemoAction } from "./commands/db-demo";
 
 function main() {
   const cli = cac("discollection");
@@ -16,6 +9,13 @@ function main() {
     .option("--cache", "Use cached collection data")
     .option("--config <path>", "Path to config file")
     .action(organizeAction);
+
+  cli
+    .command("db:demo")
+    .option("--path <path>", "SQLite file path")
+    .option("--key <key>", "Key to upsert/read in demo table")
+    .option("--value <value>", "Value to insert when key does not exist")
+    .action(dbDemoAction);
 
   cli.help();
 
