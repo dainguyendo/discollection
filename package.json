@@ -1,51 +1,17 @@
 {
-  "name": "discollection",
-  "version": "1.0.0",
-  "bin": {
-    "discollection": "./bin/run"
-  },
-  "directories": {
-    "lib": "src",
-    "bin": "bin"
-  },
-  "files": [
-    "dist",
-    "bin"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "build:watch": "tsup --watch",
-    "compile": "tsc",
-    "format": "prettier . --check",
-    "format:fix": "prettier . --write",
-    "start": "tsx ./bin/run.ts",
-    "start:node": "node ./bin/run"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "name": "discollection-monorepo",
+  "private": true,
   "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e",
-  "devDependencies": {
-    "@tsconfig/node20": "^20.1.4",
-    "@types/invariant": "^2.2.37",
-    "@types/lodash": "^4.17.7",
-    "@types/node": "^22.0.0",
-    "prettier": "3.3.3",
-    "prisma": "5.17.0",
-    "tsup": "^8.2.4",
-    "tsx": "^4.16.5",
-    "typescript": "^5.5.4"
-  },
   "dependencies": {
-    "@prisma/client": "5.17.0",
-    "chalk": "^5.3.0",
-    "chalk-table": "^1.0.2",
-    "commander": "^12.1.0",
-    "inquirer": "^10.1.2",
-    "invariant": "^2.2.4",
-    "ky": "^1.5.0",
-    "lodash": "^4.17.21",
-    "tslog": "^4.9.3"
+    "discollection": "workspace:*"
+  },
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "build:watch": "pnpm -r --if-present build:watch",
+    "compile": "pnpm -r --if-present compile",
+    "format": "pnpm -r --if-present format",
+    "format:fix": "pnpm -r --if-present format:fix",
+    "start": "pnpm --filter discollection start",
+    "start:node": "pnpm --filter discollection start:node"
   }
 }
