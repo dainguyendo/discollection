@@ -1,0 +1,6 @@
+packages:
+  - "discollection-cli"
+  - "*"
+  - "!node_modules"
+  - "!.git"
+  - "!dist"
