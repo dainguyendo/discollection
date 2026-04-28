@@ -9,6 +9,8 @@
     "build": "pnpm -r --if-present build",
     "build:watch": "pnpm -r --if-present build:watch",
     "compile": "pnpm -r --if-present compile",
+    "dev:db:reset": "sh -c 'DB_PATH=\"${DISCOLLECTION_DB_PATH:-./discollection.db}\"; rm -f \"$DB_PATH\"; echo \"Reset DB at $DB_PATH\"'",
+    "dev:seed": "sh -c 'CONFIG_PATH=\"${DISCOLLECTION_CONFIG_PATH:?Set DISCOLLECTION_CONFIG_PATH}\"; pnpm --filter discollection dev seed --config \"$CONFIG_PATH\"'",
     "format": "pnpm -r --if-present format",
     "format:fix": "pnpm -r --if-present format:fix",
     "start": "pnpm --filter discollection start",

@@ -1,21 +1,21 @@
 import { cac } from "cac";
 import { organizeAction } from "./commands/organize";
-import { dbDemoAction } from "./commands/db-demo";
+import { seedAction } from "./commands/seed";
+import { syncAction } from "./commands/sync";
 
 function main() {
   const cli = cac("discollection");
   cli
     .command("organize <output>")
-    .option("--cache", "Use cached collection data")
     .option("--config <path>", "Path to config file")
     .action(organizeAction);
 
   cli
-    .command("db:demo")
-    .option("--path <path>", "SQLite file path")
-    .option("--key <key>", "Key to upsert/read in demo table")
-    .option("--value <value>", "Value to insert when key does not exist")
-    .action(dbDemoAction);
+    .command("seed")
+    .option("--config <path>", "Path to config file")
+    .action(seedAction);
+
+  cli.command("sync").action(syncAction);
 
   cli.help();
 

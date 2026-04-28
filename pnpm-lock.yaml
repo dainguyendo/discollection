@@ -14,6 +14,9 @@ importers:
 
   discollection-cli:
     dependencies:
+      D:
+        specifier: ^1.0.0
+        version: 1.0.0
       cac:
         specifier: ^7.0.0
         version: 7.0.0
@@ -59,13 +62,13 @@ importers:
         version: 3.3.3
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(tsx@4.16.5)(typescript@5.5.4)
+        version: 8.2.4(tsx@4.16.5)(typescript@6.0.3)
       tsx:
         specifier: ^4.16.5
         version: 4.16.5
       typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
+        specifier: ^6.0.3
+        version: 6.0.3
 
   discollection-db:
     dependencies:
@@ -93,10 +96,10 @@ importers:
         version: 3.3.3
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(tsx@4.16.5)(typescript@5.5.4)
+        version: 8.2.4(tsx@4.16.5)(typescript@6.0.3)
       typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
+        specifier: ^6.0.3
+        version: 6.0.3
 
 packages:
 
@@ -867,6 +870,10 @@ packages:
   '@types/wrap-ansi@3.0.0':
     resolution: {integrity: sha512-ltIpx+kM7g/MLRZfkbL7EsCEjfzCcScLpkg37eXEtx5kmrAKBkTJwd1GIAjDSL8wTpM6Hzn5YO4pSb91BEwu1g==}
 
+  D@1.0.0:
+    resolution: {integrity: sha512-nQvrCBu7K2pSSEtIM0EEF03FVjcczCXInMt3moLNFbjlWx6bZrX72uT6/1uAXDbnzGUAx9gTyDiQ+vrFi663oA==}
+    deprecated: Package no longer supported. Contact support@npmjs.com for more info.
+
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
     engines: {node: '>=8'}
@@ -1559,6 +1566,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
@@ -1670,8 +1678,8 @@ packages:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
 
-  typescript@5.5.4:
-    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2222,6 +2230,8 @@ snapshots:
       undici-types: 6.11.1
 
   '@types/wrap-ansi@3.0.0': {}
+
+  D@1.0.0: {}
 
   ansi-escapes@4.3.2:
     dependencies:
@@ -2964,7 +2974,7 @@ snapshots:
 
   tslog@4.9.3: {}
 
-  tsup@8.2.4(tsx@4.16.5)(typescript@5.5.4):
+  tsup@8.2.4(tsx@4.16.5)(typescript@6.0.3):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.0)
       cac: 6.7.14
@@ -2983,7 +2993,7 @@ snapshots:
       sucrase: 3.35.0
       tree-kill: 1.2.2
     optionalDependencies:
-      typescript: 5.5.4
+      typescript: 6.0.3
     transitivePeerDependencies:
       - jiti
       - supports-color
@@ -3003,7 +3013,7 @@ snapshots:
 
   type-fest@0.21.3: {}
 
-  typescript@5.5.4: {}
+  typescript@6.0.3: {}
 
   undici-types@5.26.5: {}
 

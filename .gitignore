@@ -8,3 +8,5 @@ organization.json
 config.organize.json
 cache.json
 .DS_Store
+discollection.db
+tmp

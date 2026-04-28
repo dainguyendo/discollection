@@ -1,36 +1,37 @@
 # discollection-db
 
-SQLite + Drizzle database package for the discollection monorepo.
+SQLite + Drizzle data layer for the discollection monorepo.
 
-This package is intended to be the single data-access boundary that other packages import.
+## Purpose
 
-## What this package exports
+- Central DB client and schema package consumed by other workspace packages.
+- Defines collection, genre/style, override, and organize-config tables.
 
-From package root:
+## Public API
+
+Root exports:
 
 - `createDb(options?)`
 - `resolveDbPath(filePath?)`
-- `ensureCoreSchema(db)`
+- `ensureCollectionSchema(db)`
 - `schema`
 - `CreateDbOptions`
 - `DiscollectionDb`
-- `Item`
-- `NewItem`
 
-From subpath export:
+Subpath export:
 
 - `discollection-db/schema`
 
-## Local development
+## Setup
 
-From the monorepo root:
+From monorepo root:
 
 ```bash
 pnpm install
 pnpm --filter discollection-db build
 ```
 
-Watch mode while editing this package:
+Watch mode:
 
 ```bash
 pnpm --filter discollection-db build:watch
@@ -38,16 +39,10 @@ pnpm --filter discollection-db build:watch
 
 ## Environment
 
-Database path is configured through `DISCOLLECTION_DB_PATH`.
+`DISCOLLECTION_DB_PATH` controls sqlite file location.
 
-If unset, the default path is:
-
-- `./discollection.db`
-
-Used in:
-
-- `src/client.ts` runtime connection path resolution
-- `drizzle.config.ts` drizzle-kit db credentials
+- Default: `./discollection.db`
+- Used by runtime client and drizzle-kit config.
 
 Example:
 
@@ -55,50 +50,48 @@ Example:
 export DISCOLLECTION_DB_PATH=./tmp/discollection.db
 ```
 
-## Drizzle workflow
+## Drizzle Commands
 
-Schema source:
-
-- `src/schema.ts`
-
-Drizzle config:
-
-- `drizzle.config.ts`
-
-Generate migrations after schema changes:
+- Generate migration files:
 
 ```bash
 pnpm --filter discollection-db drizzle:generate
 ```
 
-Apply schema changes directly to the configured SQLite database:
+- Push schema to local SQLite DB:
 
 ```bash
 pnpm --filter discollection-db drizzle:push
 ```
 
-## Recommended schema update flow
+- Open DB Studio:
 
-1. Edit `src/schema.ts`.
+```bash
+pnpm --filter discollection-db db:studio
+```
+
+## Schema Change Workflow
+
+1. Update `src/schema.ts`.
 2. Run `pnpm --filter discollection-db drizzle:generate`.
 3. Run `pnpm --filter discollection-db drizzle:push`.
 4. Run `pnpm --filter discollection-db build`.
-5. Verify consuming packages still build.
+5. Verify dependent packages still build.
 
-## Consuming from another package
+## Example Usage
 
 ```ts
-import { createDb, ensureCoreSchema, schema } from "discollection-db";
+import { createDb, ensureCollectionSchema, schema } from "discollection-db";
 
-const db = createDb({ filePath: "./demo.db" });
-ensureCoreSchema(db);
+const db = createDb({ filePath: "./tmp/discollection.db" });
+ensureCollectionSchema(db);
 
-const rows = db.select().from(schema.items).all();
+const rows = db.select().from(schema.collectionReleases).all();
 console.log(rows.length);
 ```
 
 ## Notes
 
-- `createDb` creates parent directories for the sqlite file path when needed.
-- `ensureCoreSchema` is a lightweight bootstrap helper for initial setup and local development.
-- For real schema evolution, prefer the drizzle migration flow over manual SQL changes.
+- `createDb` auto-creates parent directories for DB file paths.
+- `ensureCollectionSchema` is for local bootstrap and non-migration initialization.
+- Prefer drizzle migration flow for schema evolution.
