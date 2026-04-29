@@ -1,6 +1,6 @@
 "use client";
 
-import { File, ListTree, Moon, Sun } from "lucide-react";
+import { File, ListTree } from "lucide-react";
 import {
   Menubar,
   MenubarContent,
@@ -17,7 +17,7 @@ import { CollectionSearch } from "./CollectionSearch";
 
 export const FloatingMenu = () => {
   const { setTheme } = useTheme();
-  const { set, setFormat, collection, format } = useCollectionStore();
+  const { set, collection } = useCollectionStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,8 +37,6 @@ export const FloatingMenu = () => {
   const triggerFileInput = () => {
     inputRef.current?.click();
   };
-
-  const formats = collection ? Object.keys(collection) : false;
 
   return (
     <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 transform rounded-full bg-background/80 px-2 py-1 shadow-lg backdrop-blur-md">
@@ -60,44 +58,18 @@ export const FloatingMenu = () => {
           </MenubarTrigger>
         </MenubarMenu>
 
-        {collection && format && (
-          <MenubarMenu>
-            <MenubarTrigger className="rounded-full p-2 data-[state=open]:bg-accent">
-              {format}&quot;
-            </MenubarTrigger>
-            <MenubarContent>
-              {formats &&
-                formats.map((f) => (
-                  <MenubarItem
-                    key={f}
-                    onClick={() => {
-                      setFormat(Number(f));
-                    }}
-                  >
-                    {f}&quot;
-                  </MenubarItem>
-                ))}
-            </MenubarContent>
-          </MenubarMenu>
-        )}
-
-        {collection && format && (
+        {collection && (
           <MenubarMenu>
             <MenubarTrigger className="rounded-full p-2 data-[state=open]:bg-accent">
               <ListTree />
             </MenubarTrigger>
             <MenubarContent>
-              <FormatTree data={collection[format]} />
+              <FormatTree data={collection} />
             </MenubarContent>
           </MenubarMenu>
         )}
 
         <MenubarMenu>
-          <MenubarTrigger className="rounded-full p-2 data-[state=open]:bg-accent">
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </MenubarTrigger>
           <MenubarContent>
             <MenubarItem onClick={() => setTheme("light")}>Light</MenubarItem>
             <MenubarItem onClick={() => setTheme("dark")}>Dark</MenubarItem>
@@ -105,7 +77,7 @@ export const FloatingMenu = () => {
           </MenubarContent>
         </MenubarMenu>
 
-        {collection && format && (
+        {collection && (
           <MenubarMenu>
             <CollectionSearch />
           </MenubarMenu>

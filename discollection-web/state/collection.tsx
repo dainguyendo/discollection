@@ -10,8 +10,11 @@ interface State {
 
   filtered: Array<Release["id"]> | null;
   setFiltered: (
-    filtered: Array<Release["basic_information"]["id"]> | null
+    filtered: Array<Release["basic_information"]["id"]> | null,
   ) => void;
+
+  focusNodeId: string | null;
+  setFocusNodeId: (id: string | null) => void;
 }
 
 export const useCollectionStore = create<State>()((set) => ({
@@ -28,4 +31,7 @@ export const useCollectionStore = create<State>()((set) => ({
 
   filtered: null,
   setFiltered: (filtered) => set({ filtered }),
+
+  focusNodeId: null,
+  setFocusNodeId: (id) => set({ focusNodeId: id }),
 }));

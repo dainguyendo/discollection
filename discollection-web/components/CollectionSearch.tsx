@@ -1,4 +1,6 @@
 import { useCollectionStore } from "@/state/collection";
+import { sanitizeKey } from "@/lib/layoutAlgorithms";
+import { Release } from "@/lib/types";
 import Fuse from "fuse.js";
 import { X } from "lucide-react";
 import React from "react";
@@ -6,31 +8,59 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { getReleaseArtist, getReleaseLabel } from "@/lib/utils";
 
+interface SearchableRelease {
+  id: number;
+  title: string;
+  artist: string;
+  labels: string;
+  genres: string[];
+  styles: string[];
+  nodeId: string;
+}
+
 export const CollectionSearch = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
-  const { collection, format, setFiltered } = useCollectionStore();
+  const { collection, setFiltered, setFocusNodeId } = useCollectionStore();
 
-  const data = collection && format ? collection[format] : null;
-
-  const releases = React.useMemo(() => {
-    if (!data) return [];
-    return Object.values(data).flatMap((item) => {
-      const arr = Array.isArray(item) ? item : Object.values(item).flat();
-      return arr.map((release) => ({
-        id: release.basic_information.id,
-        title: release.basic_information.title,
-        artist: getReleaseArtist(release),
-        labels: getReleaseLabel(release),
-        genres: release.basic_information.genres,
-        styles: release.basic_information.styles,
-      }));
-    });
-  }, [data]);
+  const releases = React.useMemo((): SearchableRelease[] => {
+    if (!collection) return [];
+    return Object.entries(collection).flatMap(([formatKey, formatData]) =>
+      Object.entries(formatData).flatMap(([genre, genreValue]) => {
+        if (Array.isArray(genreValue)) {
+          const sectionId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}`;
+          return genreValue.map((release: Release) => ({
+            id: release.basic_information.id,
+            title: release.basic_information.title,
+            artist: getReleaseArtist(release),
+            labels: getReleaseLabel(release),
+            genres: release.basic_information.genres,
+            styles: release.basic_information.styles,
+            nodeId: `release-${release.basic_information.id}-${sectionId}`,
+          }));
+        } else {
+          return Object.entries(genreValue).flatMap(
+            ([style, styleReleases]) => {
+              const sectionId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}-${sanitizeKey(style)}`;
+              return (styleReleases as Release[]).map((release: Release) => ({
+                id: release.basic_information.id,
+                title: release.basic_information.title,
+                artist: getReleaseArtist(release),
+                labels: getReleaseLabel(release),
+                genres: release.basic_information.genres,
+                styles: release.basic_information.styles,
+                nodeId: `release-${release.basic_information.id}-${sectionId}`,
+              }));
+            },
+          );
+        }
+      }),
+    );
+  }, [collection]);
 
   const fuse = React.useMemo(() => {
     return new Fuse(releases, {
       keys: ["title", "artist", "labels", "genres", "styles"],
-      threshold: 0.3, // Adjust threshold for sensitivity
+      threshold: 0.3,
     });
   }, [releases]);
 
@@ -41,19 +71,12 @@ export const CollectionSearch = () => {
     }
 
     const results = fuse.search(value);
-
-    const filteredReleaseIds = results.map((result) => result.item.id);
-
+    const filteredReleaseIds = results.map((r) => r.item.id);
     setFiltered(filteredReleaseIds);
 
-    // Get the first result and scroll to it
-    const [first] = filteredReleaseIds;
-
+    const [first] = results;
     if (first) {
-      const element = document.getElementById(`release-${first}`);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      setFocusNodeId(first.item.nodeId);
     }
   };
 
@@ -62,7 +85,7 @@ export const CollectionSearch = () => {
       <Input
         type="text"
         name="search"
-        placeholder="Lookup"
+        placeholder="Search"
         onChange={(event) => {
           const value = event.target.value;
           setSearchTerm(value);
