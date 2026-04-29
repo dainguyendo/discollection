@@ -56,7 +56,7 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
 
   return (
     <>
-      <Card className="w-80 h-80 flex flex-col relative overflow-hidden group shadow-lg hover:shadow-xl transition-shadow">
+      <Card className="w-80 h-80 flex flex-col relative overflow-hidden group shadow-lg hover:shadow-xl transition-shadow bg-black/20 backdrop-blur-md border-white/10">
         <div className="absolute inset-0 z-0">
           {thumbnail ? (
             <Image
@@ -98,7 +98,7 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
           )}
         </div>
 
-        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors z-10" />
+        <div className="absolute inset-0 bg-black/25 group-hover:bg-black/35 transition-colors z-10" />
 
         <div className="relative z-20 flex flex-col justify-end h-full p-4">
           <div className="space-y-2">

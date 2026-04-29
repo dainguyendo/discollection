@@ -5,8 +5,6 @@ import { buildCanvasGraph } from "@/lib/layoutAlgorithms";
 import { useCollectionStore } from "@/state/collection";
 import { useEffect, useMemo } from "react";
 import ReactFlow, {
-  Background,
-  Controls,
   Node,
   Edge,
   useNodesState,
@@ -89,7 +87,7 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
   const proOptions = { hideAttribution: true };
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen canvas-transparent-pane">
       <ReactFlow
         nodes={flowNodes}
         edges={flowEdges}
@@ -99,8 +97,6 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
         fitView
         proOptions={proOptions}
       >
-        <Background color="#aaa" gap={16} />
-        <Controls showZoom={false} />
         <FocusHandler />
       </ReactFlow>
     </div>

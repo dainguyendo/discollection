@@ -1,6 +1,6 @@
 "use client";
 
-import { File, ListTree, Moon, Sun } from "lucide-react";
+import { File, ListTree } from "lucide-react";
 import {
   Menubar,
   MenubarContent,
@@ -70,11 +70,6 @@ export const FloatingMenu = () => {
         )}
 
         <MenubarMenu>
-          <MenubarTrigger className="rounded-full p-2 data-[state=open]:bg-accent">
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </MenubarTrigger>
           <MenubarContent>
             <MenubarItem onClick={() => setTheme("light")}>Light</MenubarItem>
             <MenubarItem onClick={() => setTheme("dark")}>Dark</MenubarItem>
