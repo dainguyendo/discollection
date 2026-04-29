@@ -1,19 +1,18 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { HoverCard } from "@/components/ui/hover-card";
 import { Release as ReleaseType } from "@/lib/types";
 import { getReleaseArtist } from "@/lib/utils";
-import { Copy, Music } from "lucide-react";
+import { Music } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Props {
   release: ReleaseType;
@@ -26,6 +25,16 @@ export const Release = ({ release, variant = "default" }: Props) => {
   const genres = release.basic_information.genres;
   const styles = release.basic_information.styles;
   const id = release.basic_information.id;
+
+  const handleBadgeClick = async (value: string) => {
+    const command = `discollection release-override ${id} ${value}`;
+    await navigator.clipboard.writeText(command);
+    toast.success(`Copied to clipboard`, {
+      description: (
+        <code className="px-2 py-1 rounded text-xs font-mono">{command}</code>
+      ),
+    });
+  };
 
   const discogs = new URL(String(id), "https://www.discogs.com/release/");
 
@@ -47,7 +56,6 @@ export const Release = ({ release, variant = "default" }: Props) => {
   const { color1, color2 } = getGradientColors();
 
   const showBadges = variant === "default";
-  const showActions = variant === "default";
 
   return (
     <HoverCard key={id}>
@@ -110,7 +118,7 @@ export const Release = ({ release, variant = "default" }: Props) => {
                   <Badge
                     key={genre}
                     className="text-[8px] text-center cursor-pointer bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white border-none py-0.5"
-                    onClick={() => navigator.clipboard.writeText(genre)}
+                    onClick={() => handleBadgeClick(genre)}
                   >
                     {genre}
                   </Badge>
@@ -123,7 +131,7 @@ export const Release = ({ release, variant = "default" }: Props) => {
                   <Badge
                     key={style}
                     className="text-[8px] text-center cursor-pointer bg-black/20 hover:bg-black/30 backdrop-blur-sm text-white border-none py-0.5"
-                    onClick={() => navigator.clipboard.writeText(style)}
+                    onClick={() => handleBadgeClick(style)}
                   >
                     {style}
                   </Badge>
@@ -141,19 +149,6 @@ export const Release = ({ release, variant = "default" }: Props) => {
               </CardDescription>
             </Link>
           </CardHeader>
-
-          <CardFooter className="justify-end">
-            {showActions && (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => navigator.clipboard.writeText(String(id))}
-                className="text-[10px] text-neutral-400	"
-              >
-                <Copy />
-              </Button>
-            )}
-          </CardFooter>
         </div>
       </Card>
     </HoverCard>
