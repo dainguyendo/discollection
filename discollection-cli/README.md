@@ -7,6 +7,7 @@ CLI to sync a Discogs collection into SQLite and generate organized JSON output.
 - `sync`: pull collection data from Discogs into local DB.
 - `seed --config <path>`: store overrides and organize config in DB.
 - `organize <output> [--config <path>]`: generate organized JSON from DB.
+- `release-override <releaseId> <overrideValue>`: add/update one release override row in DB. Override type is inferred: values matching official Discogs genres are saved as `genre`, otherwise as `style`.
 
 ## Required Environment
 
@@ -36,6 +37,8 @@ pnpm --filter discollection build
 ```bash
 pnpm --filter discollection dev sync
 pnpm --filter discollection dev seed --config /absolute/path/to/config.discollection.json
+pnpm --filter discollection dev release-override 12345 Rock
+pnpm --filter discollection dev release-override 12345 "Hard Rock"
 pnpm --filter discollection dev organize ./tmp/organized.json
 ```
 
@@ -68,3 +71,4 @@ Notes:
 
 - `genre` and `style` keys are Discogs release IDs as JSON strings.
 - `seed` replaces existing override and config rows.
+- `release-override` uses Discogs genre/style guidelines to infer type: https://support.discogs.com/hc/en-us/articles/360005055213-Database-Guidelines-9-Genres-Styles
