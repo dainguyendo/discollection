@@ -10,3 +10,20 @@ cache.json
 .DS_Store
 discollection.db
 tmp
+
+# next.js
+.next
+/out/
+
+# production
+build
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

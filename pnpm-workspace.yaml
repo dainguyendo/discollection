@@ -1,5 +1,7 @@
 packages:
   - "discollection-cli"
+  - "discollection-db"
+  - "discollection-web"
   - "*"
   - "!node_modules"
   - "!.git"
