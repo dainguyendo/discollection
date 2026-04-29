@@ -1,6 +1,6 @@
 # discollection monorepo
 
-Monorepo for Discogs collection tooling and viewer apps.
+Monorepo for Discogs collection tooling: a CLI that syncs and organizes collection data, a shared SQLite/Drizzle data layer, and a Next.js web viewer.
 
 ## Packages
 
