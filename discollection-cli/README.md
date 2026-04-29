@@ -1,29 +1,28 @@
 # discollection CLI
 
-CLI for syncing a Discogs collection, storing data in SQLite, and generating an organized JSON library.
+CLI to sync a Discogs collection into SQLite and generate organized JSON output.
 
-## What It Does
+## Commands
 
-- `sync`: Fetch Discogs collection releases and store them in the local DB.
-- `seed --config <path>`: Seed overrides and organize settings into the DB.
-- `organize <output> [--config <path>]`: Build organized output JSON from DB data.
+- `sync`: pull collection data from Discogs into local DB.
+- `seed --config <path>`: store overrides and organize config in DB.
+- `organize <output> [--config <path>]`: generate organized JSON from DB.
 
-## Prerequisites
+## Required Environment
 
-- Node.js + pnpm
-- Discogs API token and account/folder information
+```bash
+export DISCOGS_USER="your-discogs-username"
+export DISCOGS_FOLDER_ID="0"
+export DISCOGS_PERSONAL_ACCESS_TOKEN="your-token"
+```
 
-Required environment variables:
+Optional:
 
-- `DISCOGS_USER`
-- `DISCOGS_FOLDER_ID`
-- `DISCOGS_PERSONAL_ACCESS_TOKEN`
+```bash
+export DISCOLLECTION_DB_PATH="./tmp/discollection.db"
+```
 
-Optional environment variable:
-
-- `DISCOLLECTION_DB_PATH` (defaults to `./discollection.db`)
-
-## Install And Build
+## Setup
 
 From monorepo root:
 
@@ -32,9 +31,7 @@ pnpm install
 pnpm --filter discollection build
 ```
 
-## Development Usage
-
-Run commands through the TS entrypoint:
+## Typical Development Workflow
 
 ```bash
 pnpm --filter discollection dev sync
@@ -42,42 +39,15 @@ pnpm --filter discollection dev seed --config /absolute/path/to/config.discollec
 pnpm --filter discollection dev organize ./tmp/organized.json
 ```
 
-Run built CLI:
+Run built CLI binary:
 
 ```bash
 pnpm --filter discollection start -- organize ./tmp/organized.json
 ```
 
-## Recommended Workflow
+## Config File Schema
 
-1. Set environment variables (`DISCOGS_*`, optional `DISCOLLECTION_DB_PATH`).
-2. Run `sync` to populate releases.
-3. Run `seed --config <path>` to load overrides and organize config.
-4. Run `organize <output>` to generate final JSON.
-
-## Command Reference
-
-`sync`
-
-- Fetches all Discogs pages for the configured user/folder.
-- Persists releases, genres, and styles to the local DB.
-
-`seed --config <path>`
-
-- Replaces all prior `release_overrides`, `config_subgroups`, and `config_consolidations` rows.
-- Loads `genre` and `style` per-release overrides from config.
-- Loads `subgroup` and `consolidate` organize settings into DB.
-
-`organize <output> [--config <path>]`
-
-- Reads releases and seeded overrides from DB.
-- Uses `subgroup` and `consolidate` from `--config` if provided, otherwise DB values.
-- Always uses per-release `genre`/`style` overrides from DB.
-- Writes organized JSON to `<output>`.
-
-## Config Schema
-
-Used by `seed` (all fields) and `organize --config` (`subgroup`, `consolidate`):
+Used by `seed` (all keys) and `organize --config` (`subgroup`, `consolidate`):
 
 ```json
 {
@@ -96,5 +66,5 @@ Used by `seed` (all fields) and `organize --config` (`subgroup`, `consolidate`):
 
 Notes:
 
-- `genre` and `style` keys are Discogs release IDs (as strings in JSON).
-- `subgroup` genres are grouped by style unless each style has only one release.
+- `genre` and `style` keys are Discogs release IDs as JSON strings.
+- `seed` replaces existing override and config rows.

@@ -1,15 +1,13 @@
 # discollection-db
 
-SQLite + Drizzle data layer for the discollection monorepo.
+Shared SQLite + Drizzle package for discollection.
 
 ## Purpose
 
-- Central DB client and schema package consumed by other workspace packages.
-- Defines collection, genre/style, override, and organize-config tables.
+- Provides DB client helpers and schema exports.
+- Stores collection releases, genres/styles, overrides, and organize config.
 
 ## Public API
-
-Root exports:
 
 - `createDb(options?)`
 - `resolveDbPath(filePath?)`
@@ -39,46 +37,31 @@ pnpm --filter discollection-db build:watch
 
 ## Environment
 
-`DISCOLLECTION_DB_PATH` controls sqlite file location.
+`DISCOLLECTION_DB_PATH` controls the sqlite file path.
 
 - Default: `./discollection.db`
-- Used by runtime client and drizzle-kit config.
-
-Example:
 
 ```bash
 export DISCOLLECTION_DB_PATH=./tmp/discollection.db
 ```
 
-## Drizzle Commands
-
-- Generate migration files:
+## Drizzle Workflow
 
 ```bash
 pnpm --filter discollection-db drizzle:generate
-```
-
-- Push schema to local SQLite DB:
-
-```bash
 pnpm --filter discollection-db drizzle:push
-```
-
-- Open DB Studio:
-
-```bash
 pnpm --filter discollection-db db:studio
 ```
 
-## Schema Change Workflow
+Schema update flow:
 
-1. Update `src/schema.ts`.
-2. Run `pnpm --filter discollection-db drizzle:generate`.
-3. Run `pnpm --filter discollection-db drizzle:push`.
-4. Run `pnpm --filter discollection-db build`.
-5. Verify dependent packages still build.
+1. Edit `src/schema.ts`.
+2. Run `drizzle:generate`.
+3. Run `drizzle:push`.
+4. Rebuild package.
+5. Verify dependent packages still compile.
 
-## Example Usage
+## Usage Example
 
 ```ts
 import { createDb, ensureCollectionSchema, schema } from "discollection-db";
@@ -89,9 +72,3 @@ ensureCollectionSchema(db);
 const rows = db.select().from(schema.collectionReleases).all();
 console.log(rows.length);
 ```
-
-## Notes
-
-- `createDb` auto-creates parent directories for DB file paths.
-- `ensureCollectionSchema` is for local bootstrap and non-migration initialization.
-- Prefer drizzle migration flow for schema evolution.
