@@ -1,5 +1,6 @@
 import { cac } from "cac";
 import { organizeAction } from "./commands/organize";
+import { releaseOverrideAction } from "./commands/release-override";
 import { seedAction } from "./commands/seed";
 import { syncAction } from "./commands/sync";
 
@@ -16,6 +17,10 @@ function main() {
     .action(seedAction);
 
   cli.command("sync").action(syncAction);
+
+  cli
+    .command("release-override <releaseId> <overrideValue>")
+    .action(releaseOverrideAction);
 
   cli.help();
 

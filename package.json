@@ -13,6 +13,7 @@
     "dev:seed": "sh -c 'CONFIG_PATH=\"${DISCOLLECTION_CONFIG_PATH:?Set DISCOLLECTION_CONFIG_PATH}\"; pnpm --filter discollection dev seed --config \"$CONFIG_PATH\"'",
     "format": "pnpm -r --if-present format",
     "format:fix": "pnpm -r --if-present format:fix",
+    "test": "pnpm -r --if-present test",
     "start": "pnpm --filter discollection start",
     "start:node": "pnpm --filter discollection start:node"
   }
