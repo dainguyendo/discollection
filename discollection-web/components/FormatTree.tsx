@@ -57,66 +57,66 @@ export const FormatTree = ({ data }: Props) => {
       {Object.entries(data)
         .sort(([a], [b]) => Number(b) - Number(a))
         .map(([formatKey, formatData]) => {
-        const formatNodeId = `format-${sanitizeKey(formatKey)}`;
+          const formatNodeId = `format-${sanitizeKey(formatKey)}`;
 
-        return (
-          <TreeItem
-            key={formatKey}
-            label={`${formatKey}"`}
-            nodeId={formatNodeId}
-            depth={0}
-            onFocus={setFocusNodeId}
-          >
-            {Object.entries(formatData).map(([genre, genreValue]) => {
-              const genreNodeId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}`;
+          return (
+            <TreeItem
+              key={formatKey}
+              label={`${formatKey}"`}
+              nodeId={formatNodeId}
+              depth={0}
+              onFocus={setFocusNodeId}
+            >
+              {Object.entries(formatData).map(([genre, genreValue]) => {
+                const genreNodeId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}`;
 
-              if (Array.isArray(genreValue)) {
+                if (Array.isArray(genreValue)) {
+                  return (
+                    <TreeItem
+                      key={genre}
+                      label={genre}
+                      nodeId={genreNodeId}
+                      count={genreValue.length}
+                      depth={1}
+                      onFocus={setFocusNodeId}
+                    />
+                  );
+                }
+
+                const styleEntries = Object.entries(genreValue);
+                const totalCount = styleEntries.reduce(
+                  (sum, [, releases]) => sum + (releases as unknown[]).length,
+                  0,
+                );
+
                 return (
                   <TreeItem
                     key={genre}
                     label={genre}
                     nodeId={genreNodeId}
-                    count={genreValue.length}
+                    count={totalCount}
                     depth={1}
                     onFocus={setFocusNodeId}
-                  />
+                  >
+                    {styleEntries.map(([style, releases]) => {
+                      const styleNodeId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}-${sanitizeKey(style)}`;
+                      return (
+                        <TreeItem
+                          key={style}
+                          label={style}
+                          nodeId={styleNodeId}
+                          count={(releases as unknown[]).length}
+                          depth={2}
+                          onFocus={setFocusNodeId}
+                        />
+                      );
+                    })}
+                  </TreeItem>
                 );
-              }
-
-              const styleEntries = Object.entries(genreValue);
-              const totalCount = styleEntries.reduce(
-                (sum, [, releases]) => sum + (releases as unknown[]).length,
-                0,
-              );
-
-              return (
-                <TreeItem
-                  key={genre}
-                  label={genre}
-                  nodeId={genreNodeId}
-                  count={totalCount}
-                  depth={1}
-                  onFocus={setFocusNodeId}
-                >
-                  {styleEntries.map(([style, releases]) => {
-                    const styleNodeId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}-${sanitizeKey(style)}`;
-                    return (
-                      <TreeItem
-                        key={style}
-                        label={style}
-                        nodeId={styleNodeId}
-                        count={(releases as unknown[]).length}
-                        depth={2}
-                        onFocus={setFocusNodeId}
-                      />
-                    );
-                  })}
-                </TreeItem>
-              );
-            })}
-          </TreeItem>
-        );
-      })}
+              })}
+            </TreeItem>
+          );
+        })}
     </div>
   );
 };

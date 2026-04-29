@@ -107,7 +107,7 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
               <p className="text-xs opacity-90">{artists}</p>
             </div>
             {genres.length > 0 && (
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap justify-end gap-1">
                 {genres.map((genre) => (
                   <Badge
                     key={genre}
@@ -121,7 +121,7 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
               </div>
             )}
             {styles.length > 0 && (
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap justify-end gap-1">
                 {styles.map((style) => (
                   <Badge
                     key={style}

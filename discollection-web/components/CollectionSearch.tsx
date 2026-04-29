@@ -85,7 +85,7 @@ export const CollectionSearch = () => {
       <Input
         type="text"
         name="search"
-        placeholder="Lookup"
+        placeholder="Search"
         onChange={(event) => {
           const value = event.target.value;
           setSearchTerm(value);
