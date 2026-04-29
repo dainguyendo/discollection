@@ -3,7 +3,6 @@ import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { FloatingMenu } from "@/components/FloatingMenu";
 import { FractalBackground } from "@/components/FractalBackground";
 
 const inter = Inter({
@@ -32,7 +31,6 @@ export default function RootLayout({
         >
           <FractalBackground />
           {children}
-          <FloatingMenu />
           <Toaster />
         </ThemeProvider>
       </body>
