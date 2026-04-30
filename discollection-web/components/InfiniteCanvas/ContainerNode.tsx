@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+
 interface ContainerNodeProps {
   data: {
     label: string;
@@ -17,7 +19,7 @@ const LABEL_STYLES: Record<string, string> = {
   section: "text-white/60",
 };
 
-export function ContainerNode({ data }: ContainerNodeProps) {
+function ContainerNodeComponent({ data }: ContainerNodeProps) {
   const levelStyle = LEVEL_STYLES[data.level] ?? LEVEL_STYLES.section;
   const labelStyle = LABEL_STYLES[data.level] ?? LABEL_STYLES.section;
 
@@ -35,3 +37,5 @@ export function ContainerNode({ data }: ContainerNodeProps) {
     </div>
   );
 }
+
+export const ContainerNode = memo(ContainerNodeComponent);
