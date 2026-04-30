@@ -351,6 +351,16 @@ export function FractalBackground() {
 
     mediaQuery.addEventListener("change", onMediaChange);
 
+    const draw = (time: number) => {
+      gl.useProgram(program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.enableVertexAttribArray(positionLoc);
+      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+      gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
+      gl.uniform1f(timeLoc, time);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = Math.floor(canvas.clientWidth * dpr);
@@ -362,29 +372,19 @@ export function FractalBackground() {
       }
 
       gl.viewport(0, 0, canvas.width, canvas.height);
+      draw(reduceMotion ? 0 : (performance.now() - start) * 0.001);
+    };
+
+    let rafId = 0;
+    const start = performance.now();
+    const render = (now: number) => {
+      const elapsed = (now - start) * 0.001;
+      draw(reduceMotion ? 0 : elapsed);
+      rafId = window.requestAnimationFrame(render);
     };
 
     resize();
     window.addEventListener("resize", resize);
-
-    let rafId = 0;
-    const start = performance.now();
-
-    const render = (now: number) => {
-      const elapsed = (now - start) * 0.001;
-      const time = reduceMotion ? 0.0 : elapsed;
-
-      gl.useProgram(program);
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      gl.enableVertexAttribArray(positionLoc);
-      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
-      gl.uniform1f(timeLoc, time);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-      rafId = window.requestAnimationFrame(render);
-    };
-
     rafId = window.requestAnimationFrame(render);
 
     return () => {
