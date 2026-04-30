@@ -1,5 +1,6 @@
 "use client";
 
+import { FractalBackground } from "@/components/FractalBackground";
 import { useCollectionStore } from "@/state/collection";
 import { InfiniteCanvasFlow } from "@/components/InfiniteCanvasFlow";
 import { SidePanel } from "@/components/SidePanel";
@@ -60,6 +61,7 @@ export default function Home() {
   if (!collection) {
     return (
       <div className="empty-state-shell">
+        <FractalBackground />
         <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center px-6 py-16">
           <h1 className="empty-title font-mono">discollection</h1>
 
