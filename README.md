@@ -1,12 +1,12 @@
 # discollection monorepo
 
-Monorepo for Discogs collection tooling: a CLI that syncs and organizes collection data, a shared SQLite/Drizzle data layer, and a Next.js web viewer.
+Monorepo for Discogs collection tooling: a CLI for syncing, organizing, and locating releases, a shared SQLite/Drizzle data layer, and a Next.js web viewer for organized exports.
 
 ## Packages
 
-- `discollection` ([discollection-cli/README.md](discollection-cli/README.md)): CLI for `sync`, `seed`, and `organize`.
-- `discollection-db` ([discollection-db/README.md](discollection-db/README.md)): SQLite + Drizzle schema/client package.
-- `discollection-web` ([discollection-web/README.md](discollection-web/README.md)): Next.js viewer for organized JSON output.
+- `discollection` ([discollection-cli/README.md](discollection-cli/README.md)): CLI for `sync`, `seed`, `organize`, `locate`, and `release-override`.
+- `discollection-db` ([discollection-db/README.md](discollection-db/README.md)): SQLite + Drizzle schema/client package used by the CLI.
+- `discollection-web` ([discollection-web/README.md](discollection-web/README.md)): Next.js viewer for organized JSON exports with search and graph navigation.
 
 ## Quick Start
 
@@ -35,7 +35,10 @@ export DISCOLLECTION_DB_PATH="./tmp/discollection.db"
 pnpm --filter discollection dev sync
 pnpm --filter discollection dev seed --config /absolute/path/to/config.discollection.json
 pnpm --filter discollection dev organize ./tmp/organized.json
+pnpm --filter discollection dev locate ./tmp/organized.json --once --voice Daniel --speech-rate 200
 ```
+
+Voice capture mode for `locate` requires `ffmpeg`, `whisper-cli`, and a local Whisper model. Text queries can run without those dependencies. See the CLI README for setup details.
 
 ## Web Workflow
 
