@@ -5,7 +5,7 @@ Shared SQLite + Drizzle package for discollection.
 ## Purpose
 
 - Provides DB client helpers and schema exports.
-- Stores collection releases, genres/styles, overrides, and organize config.
+- Stores collection releases, genres, styles, overrides, and organize config used by the CLI.
 
 ## Public API
 
@@ -40,6 +40,7 @@ pnpm --filter discollection-db build:watch
 `DISCOLLECTION_DB_PATH` controls the sqlite file path.
 
 - Default: `./discollection.db`
+- Parent directories are created automatically when opening a file-backed DB.
 
 ```bash
 export DISCOLLECTION_DB_PATH=./tmp/discollection.db

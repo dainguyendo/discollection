@@ -26,6 +26,9 @@ importers:
       discollection-db:
         specifier: workspace:*
         version: link:../discollection-db
+      fuse.js:
+        specifier: ^7.1.0
+        version: 7.3.0
       ky:
         specifier: ^1.5.0
         version: 1.5.0
@@ -65,10 +68,10 @@ importers:
         version: 6.0.3
       vite:
         specifier: ^8
-        version: 8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5)
+        version: 8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5)
       vitest:
         specifier: ^4.1.5
-        version: 4.1.5(@types/node@22.0.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5))
+        version: 4.1.5(@types/node@22.0.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5))
 
   discollection-db:
     dependencies:
@@ -5969,7 +5972,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.0.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5))
+      vitest: 4.1.5(@types/node@22.0.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5))
 
   '@vitest/expect@4.1.5':
     dependencies:
@@ -5980,13 +5983,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.0
 
-  '@vitest/mocker@4.1.5(vite@8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5))':
+  '@vitest/mocker@4.1.5(vite@8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5))':
     dependencies:
       '@vitest/spy': 4.1.5
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5)
+      vite: 8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5)
 
   '@vitest/pretty-format@4.1.5':
     dependencies:
@@ -8376,7 +8379,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite@8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5):
+  vite@8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -8385,14 +8388,15 @@ snapshots:
       tinyglobby: 0.2.16
     optionalDependencies:
       '@types/node': 22.0.0
+      esbuild: 0.23.0
       fsevents: 2.3.3
       jiti: 1.21.7
       tsx: 4.16.5
 
-  vitest@4.1.5(@types/node@22.0.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5)):
+  vitest@4.1.5(@types/node@22.0.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5)):
     dependencies:
       '@vitest/expect': 4.1.5
-      '@vitest/mocker': 4.1.5(vite@8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5))
+      '@vitest/mocker': 4.1.5(vite@8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5))
       '@vitest/pretty-format': 4.1.5
       '@vitest/runner': 4.1.5
       '@vitest/snapshot': 4.1.5
@@ -8409,7 +8413,7 @@ snapshots:
       tinyexec: 1.1.2
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
-      vite: 8.0.10(@types/node@22.0.0)(jiti@1.21.7)(tsx@4.16.5)
+      vite: 8.0.10(@types/node@22.0.0)(esbuild@0.23.0)(jiti@1.21.7)(tsx@4.16.5)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.0.0
