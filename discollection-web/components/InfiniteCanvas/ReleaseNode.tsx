@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Release as ReleaseType } from "@/lib/types";
@@ -17,7 +18,7 @@ interface ReleaseNodeProps {
   };
 }
 
-export function ReleaseNode({ data }: ReleaseNodeProps) {
+function ReleaseNodeComponent({ data }: ReleaseNodeProps) {
   if (data.type !== "release" || !data.release) {
     return <div>Invalid node</div>;
   }
@@ -29,6 +30,10 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
   const genres = release.basic_information.genres;
   const styles = release.basic_information.styles;
   const id = release.basic_information.id;
+  const discogs = new URL(
+    String(id),
+    "https://www.discogs.com/release/",
+  ).toString();
 
   const handleBadgeClick = async (value: string) => {
     const command = `discollection release-override ${id} ${value}`;
@@ -90,8 +95,16 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
               </div>
               <div className="flex flex-col items-center justify-center text-white">
                 <div className="text-center px-4">
-                  <p className="font-bold text-sm">{title}</p>
-                  <p className="text-xs opacity-80">{artists}</p>
+                  <a
+                    href={discogs}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block hover:underline nodrag nopan"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <span className="block font-bold text-sm">{title}</span>
+                    <span className="block text-xs opacity-80">{artists}</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -103,8 +116,18 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
         <div className="relative z-20 flex flex-col justify-end h-full p-4">
           <div className="space-y-2">
             <div className="text-white">
-              <h3 className="font-bold text-sm line-clamp-2">{title}</h3>
-              <p className="text-xs opacity-90">{artists}</p>
+              <a
+                href={discogs}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block hover:underline nodrag nopan"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <span className="block font-bold text-sm line-clamp-2">
+                  {title}
+                </span>
+                <span className="block text-xs opacity-90">{artists}</span>
+              </a>
             </div>
             {genres.length > 0 && (
               <div className="flex flex-wrap justify-end gap-1">
@@ -140,3 +163,5 @@ export function ReleaseNode({ data }: ReleaseNodeProps) {
     </>
   );
 }
+
+export const ReleaseNode = memo(ReleaseNodeComponent);

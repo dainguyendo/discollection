@@ -10,6 +10,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   useReactFlow,
+  MiniMap,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { ReleaseNode } from "./InfiniteCanvas/ReleaseNode";
@@ -27,7 +28,7 @@ function FocusHandler() {
     if (!focusNodeId) return;
     fitView({
       nodes: [{ id: focusNodeId }],
-      duration: 600,
+      duration: 280,
       padding: 0.3,
       maxZoom: 1.5,
     });
@@ -46,6 +47,10 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
     [],
   );
   const { filtered } = useCollectionStore();
+  const filteredSet = useMemo(
+    () => (filtered?.length ? new Set(filtered) : null),
+    [filtered],
+  );
 
   // Build graph from collection data
   const { nodes: baseNodes, edges: baseEdges } = useMemo(
@@ -57,23 +62,53 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
   const nodes = useMemo(() => {
     return baseNodes.map((node) => ({
       ...node,
-      data: {
-        ...node.data,
-      },
       style: {
         ...node.style,
         opacity:
-          node.data.type === "release" && filtered?.length
-            ? filtered.includes(node.data.release?.basic_information.id ?? -1)
+          node.data.type === "release" && filteredSet
+            ? filteredSet.has(node.data.release?.basic_information.id ?? -1)
               ? 1
               : 0.3
             : 1,
-        transition: "opacity 0.2s ease-in-out",
+        transition: "opacity 0.16s ease-out",
       },
     })) as Node[];
-  }, [baseNodes, filtered]);
+  }, [baseNodes, filteredSet]);
 
   const edges = useMemo(() => baseEdges as Edge[], [baseEdges]);
+
+  const translateExtent = useMemo(() => {
+    const rootContainers = baseNodes.filter(
+      (node) => node.type === "container" && !node.parentNode,
+    );
+
+    if (!rootContainers.length) {
+      return [
+        [-2000, -2000],
+        [2000, 2000],
+      ] as [[number, number], [number, number]];
+    }
+
+    const minX = Math.min(...rootContainers.map((node) => node.position.x));
+    const minY = Math.min(...rootContainers.map((node) => node.position.y));
+    const maxX = Math.max(
+      ...rootContainers.map(
+        (node) => node.position.x + Number(node.style?.width ?? 0),
+      ),
+    );
+    const maxY = Math.max(
+      ...rootContainers.map(
+        (node) => node.position.y + Number(node.style?.height ?? 0),
+      ),
+    );
+
+    const padding = 420;
+
+    return [
+      [minX - padding, minY - padding],
+      [maxX + padding, maxY + padding],
+    ] as [[number, number], [number, number]];
+  }, [baseNodes]);
 
   const [flowNodes, setNodes, onNodesChange] = useNodesState(nodes);
   const [flowEdges, setEdges, onEdgesChange] = useEdgesState(edges);
@@ -85,6 +120,21 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
   }, [nodes, edges, setNodes, setEdges]);
 
   const proOptions = { hideAttribution: true };
+  const minimapNodeColor = (node: Node) => {
+    if (node.type === "container") {
+      return "hsl(var(--muted-foreground) / 0.18)";
+    }
+
+    return "hsl(var(--foreground) / 0.34)";
+  };
+
+  const minimapNodeStrokeColor = (node: Node) => {
+    if (node.type === "container") {
+      return "hsl(var(--border) / 0.28)";
+    }
+
+    return "hsl(var(--foreground) / 0.14)";
+  };
 
   return (
     <div className="w-full h-screen canvas-transparent-pane">
@@ -95,8 +145,22 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
         fitView
+        translateExtent={translateExtent}
         proOptions={proOptions}
+        onlyRenderVisibleElements
       >
+        <MiniMap
+          pannable
+          className="canvas-minimap"
+          maskColor="hsl(var(--background) / 0.08)"
+          nodeColor={minimapNodeColor}
+          nodeStrokeColor={minimapNodeStrokeColor}
+          nodeBorderRadius={10}
+          style={{
+            width: 180,
+            height: 112,
+          }}
+        />
         <FocusHandler />
       </ReactFlow>
     </div>

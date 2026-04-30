@@ -8,8 +8,16 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import * as Separator from "@radix-ui/react-separator";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import Fuse from "fuse.js";
-import { ChevronRight, Upload, X } from "lucide-react";
-import { ChangeEvent, useRef, useState, useMemo, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Upload, X } from "lucide-react";
+import { useHotkeys } from "react-hotkeys-hook";
+import {
+  ChangeEvent,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+} from "react";
 import { cn } from "@/lib/utils";
 
 // ─── Tree ────────────────────────────────────────────────────────────────────
@@ -230,7 +238,20 @@ interface SidePanelProps {
 export function SidePanel({ collection, onUpload }: SidePanelProps) {
   const { setFocusNodeId, setFiltered } = useCollectionStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [matchNodeIds, setMatchNodeIds] = useState<string[]>([]);
+  const [activeMatchIndex, setActiveMatchIndex] = useState(0);
+
+  useHotkeys(
+    "meta+f",
+    (event) => {
+      event.preventDefault();
+      searchInputRef.current?.focus();
+      searchInputRef.current?.select();
+    },
+    { preventDefault: true },
+  );
 
   const releases = useMemo(() => buildSearchIndex(collection), [collection]);
 
@@ -247,19 +268,53 @@ export function SidePanel({ collection, onUpload }: SidePanelProps) {
     (value: string) => {
       if (!value.trim()) {
         setFiltered(null);
+        setMatchNodeIds([]);
+        setActiveMatchIndex(0);
         return;
       }
+
       const results = fuse.search(value);
       setFiltered(results.map((r) => r.item.id));
-      const [first] = results;
-      if (first) setFocusNodeId(first.item.nodeId);
+
+      const nextMatchNodeIds = results.map((result) => result.item.nodeId);
+      setMatchNodeIds(nextMatchNodeIds);
+      setActiveMatchIndex(0);
+
+      const [firstNodeId] = nextMatchNodeIds;
+      if (firstNodeId) setFocusNodeId(firstNodeId);
     },
     [fuse, setFiltered, setFocusNodeId],
+  );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      handleSearch(searchTerm);
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [searchTerm, handleSearch]);
+
+  const focusMatchAt = useCallback(
+    (targetIndex: number) => {
+      if (!matchNodeIds.length) return;
+
+      const normalizedIndex =
+        ((targetIndex % matchNodeIds.length) + matchNodeIds.length) %
+        matchNodeIds.length;
+
+      setActiveMatchIndex(normalizedIndex);
+      setFocusNodeId(matchNodeIds[normalizedIndex]);
+    },
+    [matchNodeIds, setFocusNodeId],
   );
 
   const clearSearch = () => {
     setSearchTerm("");
     setFiltered(null);
+    setMatchNodeIds([]);
+    setActiveMatchIndex(0);
   };
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -291,16 +346,20 @@ export function SidePanel({ collection, onUpload }: SidePanelProps) {
         <div className="px-3 py-2">
           <div className="flex items-center gap-1 rounded-md border border-white/[0.1] bg-white/[0.04] px-2 focus-within:border-white/[0.2] focus-within:bg-white/[0.07] transition-colors">
             <input
+              ref={searchInputRef}
               type="text"
               placeholder="Search releases…"
               value={searchTerm}
               className="flex-1 bg-transparent py-1.5 text-xs text-white/80 placeholder-white/30 outline-none"
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                handleSearch(e.target.value);
               }}
               onKeyDown={(e) => {
                 if (e.key === "Escape") clearSearch();
+                if (e.key === "Enter" && matchNodeIds.length > 1) {
+                  e.preventDefault();
+                  focusMatchAt(activeMatchIndex + 1);
+                }
               }}
             />
             {searchTerm && (
@@ -313,6 +372,35 @@ export function SidePanel({ collection, onUpload }: SidePanelProps) {
               </button>
             )}
           </div>
+          {searchTerm.trim() && (
+            <div className="mt-1 flex items-center justify-between px-1 text-[10px] text-white/35">
+              <span className="tabular-nums">
+                {matchNodeIds.length === 0
+                  ? "No matches"
+                  : `${activeMatchIndex + 1} / ${matchNodeIds.length} matches`}
+              </span>
+              {matchNodeIds.length > 1 && (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label="Previous match"
+                    onClick={() => focusMatchAt(activeMatchIndex - 1)}
+                    className="rounded p-0.5 text-white/45 transition-colors hover:bg-white/[0.08] hover:text-white/80"
+                  >
+                    <ChevronLeft className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next match"
+                    onClick={() => focusMatchAt(activeMatchIndex + 1)}
+                    className="rounded p-0.5 text-white/45 transition-colors hover:bg-white/[0.08] hover:text-white/80"
+                  >
+                    <ChevronRight className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <Separator.Root className="h-px bg-white/[0.07]" />
