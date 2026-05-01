@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Release } from "../types";
+
 const mocks = vi.hoisted(() => {
   const ensureCollectionSchema = vi.fn();
 
@@ -38,12 +40,7 @@ vi.mock("discollection-db", () => ({
   schema: mocks.schema,
 }));
 
-function makeRelease(
-  id: number,
-  genre: string,
-  style: string,
-  artist: string,
-): any {
+function makeRelease(id: number, genre: string, style: string, artist: string): Release {
   return {
     id,
     instance_id: id,
@@ -92,9 +89,7 @@ describe("organize utilities", () => {
         artist: "Artist",
       },
     ]);
-    mocks.rowsByTable.set(mocks.schema.releaseGenres, [
-      { id: 1, releaseId: 1, genre: "Rock" },
-    ]);
+    mocks.rowsByTable.set(mocks.schema.releaseGenres, [{ id: 1, releaseId: 1, genre: "Rock" }]);
     mocks.rowsByTable.set(mocks.schema.releaseStyles, [
       { id: 1, releaseId: 1, style: "Hard Rock" },
     ]);
@@ -102,9 +97,7 @@ describe("organize utilities", () => {
       { id: 1, releaseId: 1, overrideType: "genre", value: "Electronic" },
       { id: 2, releaseId: 100, overrideType: "style", value: "Techno" },
     ]);
-    mocks.rowsByTable.set(mocks.schema.configSubgroups, [
-      { id: 1, genre: "Rock" },
-    ]);
+    mocks.rowsByTable.set(mocks.schema.configSubgroups, [{ id: 1, genre: "Rock" }]);
     mocks.rowsByTable.set(mocks.schema.configConsolidations, [
       { id: 1, style: "Hard Rock", value: "Rock" },
     ]);

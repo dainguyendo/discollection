@@ -1,8 +1,5 @@
 "use client";
 
-import { Collection } from "@/lib/types";
-import { buildCanvasGraph } from "@/lib/layoutAlgorithms";
-import { useCollectionStore } from "@/state/collection";
 import { useEffect, useMemo } from "react";
 import ReactFlow, {
   Node,
@@ -12,9 +9,14 @@ import ReactFlow, {
   useReactFlow,
   MiniMap,
 } from "reactflow";
+
+import { buildCanvasGraph } from "@/lib/layoutAlgorithms";
+import { Collection } from "@/lib/types";
+import { useCollectionStore } from "@/state/collection";
+
 import "reactflow/dist/style.css";
-import { ReleaseNode } from "./InfiniteCanvas/ReleaseNode";
 import { ContainerNode } from "./InfiniteCanvas/ContainerNode";
+import { ReleaseNode } from "./InfiniteCanvas/ReleaseNode";
 
 interface InfiniteCanvasFlowProps {
   data: Collection;
@@ -38,6 +40,22 @@ function FocusHandler() {
   return null;
 }
 
+const minimapNodeColor = (node: Node) => {
+  if (node.type === "container") {
+    return "hsl(var(--muted-foreground) / 0.18)";
+  }
+
+  return "hsl(var(--foreground) / 0.34)";
+};
+
+const minimapNodeStrokeColor = (node: Node) => {
+  if (node.type === "container") {
+    return "hsl(var(--border) / 0.28)";
+  }
+
+  return "hsl(var(--foreground) / 0.14)";
+};
+
 export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
   const nodeTypes = useMemo(
     () => ({
@@ -47,16 +65,10 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
     [],
   );
   const { filtered } = useCollectionStore();
-  const filteredSet = useMemo(
-    () => (filtered?.length ? new Set(filtered) : null),
-    [filtered],
-  );
+  const filteredSet = useMemo(() => (filtered?.length ? new Set(filtered) : null), [filtered]);
 
   // Build graph from collection data
-  const { nodes: baseNodes, edges: baseEdges } = useMemo(
-    () => buildCanvasGraph(data),
-    [data],
-  );
+  const { nodes: baseNodes, edges: baseEdges } = useMemo(() => buildCanvasGraph(data), [data]);
 
   // Apply filtering: dim non-matching nodes
   const nodes = useMemo(() => {
@@ -92,14 +104,10 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
     const minX = Math.min(...rootContainers.map((node) => node.position.x));
     const minY = Math.min(...rootContainers.map((node) => node.position.y));
     const maxX = Math.max(
-      ...rootContainers.map(
-        (node) => node.position.x + Number(node.style?.width ?? 0),
-      ),
+      ...rootContainers.map((node) => node.position.x + Number(node.style?.width ?? 0)),
     );
     const maxY = Math.max(
-      ...rootContainers.map(
-        (node) => node.position.y + Number(node.style?.height ?? 0),
-      ),
+      ...rootContainers.map((node) => node.position.y + Number(node.style?.height ?? 0)),
     );
 
     const padding = 420;
@@ -120,21 +128,6 @@ export function InfiniteCanvasFlow({ data }: InfiniteCanvasFlowProps) {
   }, [nodes, edges, setNodes, setEdges]);
 
   const proOptions = { hideAttribution: true };
-  const minimapNodeColor = (node: Node) => {
-    if (node.type === "container") {
-      return "hsl(var(--muted-foreground) / 0.18)";
-    }
-
-    return "hsl(var(--foreground) / 0.34)";
-  };
-
-  const minimapNodeStrokeColor = (node: Node) => {
-    if (node.type === "container") {
-      return "hsl(var(--border) / 0.28)";
-    }
-
-    return "hsl(var(--foreground) / 0.14)";
-  };
 
   return (
     <div className="w-full h-screen canvas-transparent-pane">

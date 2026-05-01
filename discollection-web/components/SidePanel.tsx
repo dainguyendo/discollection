@@ -1,24 +1,18 @@
 "use client";
 
-import { useCollectionStore } from "@/state/collection";
-import { sanitizeKey } from "@/lib/layoutAlgorithms";
-import { Collection, Release } from "@/lib/types";
-import { getReleaseArtist, getReleaseLabel } from "@/lib/utils";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import * as Separator from "@radix-ui/react-separator";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import Fuse from "fuse.js";
 import { ChevronLeft, ChevronRight, Upload, X } from "lucide-react";
+import { ChangeEvent, useRef, useState, useMemo, useCallback, useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import {
-  ChangeEvent,
-  useRef,
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-} from "react";
+
+import { sanitizeKey } from "@/lib/layoutAlgorithms";
+import { Collection, Release } from "@/lib/types";
+import { getReleaseArtist, getReleaseLabel } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useCollectionStore } from "@/state/collection";
 
 // ─── Tree ────────────────────────────────────────────────────────────────────
 
@@ -44,9 +38,7 @@ function TreeRow({ label, nodeId, count, depth = 0, onFocus }: TreeRowProps) {
     >
       <span className="truncate flex-1">{label}</span>
       {count !== undefined && (
-        <span className="ml-auto shrink-0 tabular-nums text-white/30">
-          {count}
-        </span>
+        <span className="ml-auto shrink-0 tabular-nums text-white/30">{count}</span>
       )}
     </button>
   );
@@ -65,8 +57,7 @@ function TreeSection({ formatKey, formatData, onFocus }: TreeSectionProps) {
     let n = 0;
     for (const v of Object.values(formatData)) {
       if (Array.isArray(v)) n += v.length;
-      else
-        n += Object.values(v).reduce((s, r) => s + (r as unknown[]).length, 0);
+      else n += Object.values(v).reduce((s, r) => s + (r as unknown[]).length, 0);
     }
     return n;
   }, [formatData]);
@@ -88,9 +79,7 @@ function TreeSection({ formatKey, formatData, onFocus }: TreeSectionProps) {
             )}
           />
           <span className="truncate flex-1">{formatKey}&quot;</span>
-          <span className="ml-auto shrink-0 tabular-nums text-white/30">
-            {totalCount}
-          </span>
+          <span className="ml-auto shrink-0 tabular-nums text-white/30">{totalCount}</span>
         </button>
       </Collapsible.Trigger>
 
@@ -113,10 +102,7 @@ function TreeSection({ formatKey, formatData, onFocus }: TreeSectionProps) {
             }
 
             const styleEntries = Object.entries(genreValue);
-            const total = styleEntries.reduce(
-              (s, [, r]) => s + (r as unknown[]).length,
-              0,
-            );
+            const total = styleEntries.reduce((s, [, r]) => s + (r as unknown[]).length, 0);
 
             return (
               <div key={genre}>
@@ -301,8 +287,7 @@ export function SidePanel({ collection, onUpload }: SidePanelProps) {
       if (!matchNodeIds.length) return;
 
       const normalizedIndex =
-        ((targetIndex % matchNodeIds.length) + matchNodeIds.length) %
-        matchNodeIds.length;
+        ((targetIndex % matchNodeIds.length) + matchNodeIds.length) % matchNodeIds.length;
 
       setActiveMatchIndex(normalizedIndex);
       setFocusNodeId(matchNodeIds[normalizedIndex]);
@@ -335,9 +320,7 @@ export function SidePanel({ collection, onUpload }: SidePanelProps) {
       <aside className="relative z-10 flex h-screen w-56 flex-col border-r border-white/[0.08] bg-white/[0.04] backdrop-blur-md">
         {/* Header */}
         <div className="px-3 py-4">
-          <p className="font-mono text-sm font-bold tracking-tight text-white/80">
-            discollection
-          </p>
+          <p className="font-mono text-sm font-bold tracking-tight text-white/80">discollection</p>
         </div>
 
         <Separator.Root className="h-px bg-white/[0.07]" />
@@ -414,12 +397,7 @@ export function SidePanel({ collection, onUpload }: SidePanelProps) {
             <TreeSection
               key={formatKey}
               formatKey={formatKey}
-              formatData={
-                formatData as Record<
-                  string,
-                  Release[] | Record<string, Release[]>
-                >
-              }
+              formatData={formatData as Record<string, Release[] | Record<string, Release[]>>}
               onFocus={setFocusNodeId}
             />
           ))}
@@ -436,10 +414,7 @@ export function SidePanel({ collection, onUpload }: SidePanelProps) {
             className="sr-only"
             onChange={handleFileChange}
           />
-          <IconButton
-            label="Upload new collection"
-            onClick={() => fileInputRef.current?.click()}
-          >
+          <IconButton label="Upload new collection" onClick={() => fileInputRef.current?.click()}>
             <Upload className="h-4 w-4" />
           </IconButton>
         </div>

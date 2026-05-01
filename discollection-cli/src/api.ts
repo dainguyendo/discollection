@@ -1,4 +1,5 @@
 import ky from "ky";
+
 import logger from "./logger";
 import { GetReleasesResponse, Release } from "./types";
 
@@ -21,31 +22,31 @@ const api = ky.extend({
 });
 
 export async function list(): Promise<GetReleasesResponse["releases"]> {
-  let list: Array<Release> = [];
+  let releases: Array<Release> = [];
 
   let url = `https://api.discogs.com/users/${user}/collection/folders/${folder}/releases`;
 
   try {
     do {
       const response = await api.get(url);
-      const data = await response.json<any>();
-      const { pagination, releases } = data;
+      const data: GetReleasesResponse = await response.json();
+      const { pagination, releases: pageReleases } = data;
 
       logger.info("Fetched page of collection", { pagination });
 
       url = pagination?.urls?.next;
 
-      list.push(...releases);
+      releases.push(...pageReleases);
 
       await new Promise((r) => setTimeout(r, 750));
 
       logger.info("Processed page", { page: pagination.page });
     } while (url);
 
-    logger.info("Finished processing", { total: list.length });
+    logger.info("Finished processing", { total: releases.length });
   } catch (error) {
     logger.error(error);
   }
 
-  return list;
+  return releases;
 }

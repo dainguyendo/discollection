@@ -1,10 +1,4 @@
-import {
-  index,
-  integer,
-  sqliteTable,
-  text,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // One row per collection release entry from Discogs list() response.
 export const collectionReleases = sqliteTable(
@@ -25,13 +19,9 @@ export const collectionReleases = sqliteTable(
     artist: text("artist"),
   },
   (table) => ({
-    instanceIdUnique: uniqueIndex("collection_releases_instance_id_unique").on(
-      table.instanceId,
-    ),
+    instanceIdUnique: uniqueIndex("collection_releases_instance_id_unique").on(table.instanceId),
     folderIdIdx: index("collection_releases_folder_id_idx").on(table.folderId),
-    releaseIdIdx: index("collection_releases_discogs_release_id_idx").on(
-      table.discogsReleaseId,
-    ),
+    releaseIdIdx: index("collection_releases_discogs_release_id_idx").on(table.discogsReleaseId),
   }),
 );
 
@@ -75,9 +65,10 @@ export const releaseOverrides = sqliteTable(
   },
   (table) => ({
     releaseIdIdx: index("release_overrides_release_id_idx").on(table.releaseId),
-    releaseOverrideTypeUnique: uniqueIndex(
-      "release_overrides_release_id_type_unique",
-    ).on(table.releaseId, table.overrideType),
+    releaseOverrideTypeUnique: uniqueIndex("release_overrides_release_id_type_unique").on(
+      table.releaseId,
+      table.overrideType,
+    ),
   }),
 );
 
@@ -100,9 +91,7 @@ export const configConsolidations = sqliteTable(
     value: text("value").notNull(),
   },
   (table) => ({
-    styleUnique: uniqueIndex("config_consolidations_style_unique").on(
-      table.style,
-    ),
+    styleUnique: uniqueIndex("config_consolidations_style_unique").on(table.style),
   }),
 );
 

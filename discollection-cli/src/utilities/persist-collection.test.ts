@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Release } from "../types";
+
 const mocks = vi.hoisted(() => {
   const logger = {
     info: vi.fn(),
@@ -72,7 +74,7 @@ vi.mock("./release", () => ({
   getReleasePrimaryArtist: mocks.getReleasePrimaryArtist,
 }));
 
-function makeRelease(id: number): any {
+function makeRelease(id: number): Release {
   return {
     id,
     instance_id: id,
@@ -114,19 +116,14 @@ describe("persistCollectionToDb", () => {
 
     expect(mocks.tx.delete).toHaveBeenCalledWith(mocks.schema.releaseStyles);
     expect(mocks.tx.delete).toHaveBeenCalledWith(mocks.schema.releaseGenres);
-    expect(mocks.tx.delete).toHaveBeenCalledWith(
-      mocks.schema.collectionReleases,
-    );
+    expect(mocks.tx.delete).toHaveBeenCalledWith(mocks.schema.collectionReleases);
 
     expect(mocks.insertedReleases).toHaveLength(2);
     expect(mocks.getReleaseFormat).toHaveBeenCalledTimes(2);
     expect(mocks.getReleasePrimaryArtist).toHaveBeenCalledTimes(2);
 
-    expect(mocks.logger.info).toHaveBeenCalledWith(
-      "Saved collection snapshot to database",
-      {
-        total: 2,
-      },
-    );
+    expect(mocks.logger.info).toHaveBeenCalledWith("Saved collection snapshot to database", {
+      total: 2,
+    });
   });
 });

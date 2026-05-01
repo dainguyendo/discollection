@@ -1,19 +1,15 @@
 "use client";
 
 import { File, ListTree } from "lucide-react";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "./ui/menubar";
 import { useTheme } from "next-themes";
-import { Input } from "./ui/input";
-import { useCollectionStore } from "@/state/collection";
 import { ChangeEvent, useRef } from "react";
-import { FormatTree } from "./FormatTree";
+
+import { useCollectionStore } from "@/state/collection";
+
 import { CollectionSearch } from "./CollectionSearch";
+import { FormatTree } from "./FormatTree";
+import { Input } from "./ui/input";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "./ui/menubar";
 
 export const FloatingMenu = () => {
   const { setTheme } = useTheme();
@@ -24,12 +20,12 @@ export const FloatingMenu = () => {
     const file = event?.target?.files?.[0] as File;
     const reader = new FileReader();
 
-    reader.onload = async (e) => {
-      const data = JSON.parse(e.target?.result as string);
+    reader.addEventListener("load", async (e) => {
+      const data = JSON.parse((e.target as FileReader)?.result as string);
       set(data);
 
       event.target.value = "";
-    };
+    });
 
     reader.readAsText(file);
   };

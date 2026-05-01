@@ -54,10 +54,9 @@ describe("releaseOverrideAction", () => {
     const { releaseOverrideAction } = await import("./release-override");
     releaseOverrideAction("bad", "Rock");
 
-    expect(mocks.logger.error).toHaveBeenCalledWith(
-      "Release ID must be a positive integer",
-      { releaseIdText: "bad" },
-    );
+    expect(mocks.logger.error).toHaveBeenCalledWith("Release ID must be a positive integer", {
+      releaseIdText: "bad",
+    });
     expect(mocks.createDb).not.toHaveBeenCalled();
   });
 
@@ -65,9 +64,7 @@ describe("releaseOverrideAction", () => {
     const { releaseOverrideAction } = await import("./release-override");
     releaseOverrideAction("123", "   ");
 
-    expect(mocks.logger.error).toHaveBeenCalledWith(
-      "Override value cannot be empty",
-    );
+    expect(mocks.logger.error).toHaveBeenCalledWith("Override value cannot be empty");
     expect(mocks.createDb).not.toHaveBeenCalled();
   });
 
@@ -84,10 +81,7 @@ describe("releaseOverrideAction", () => {
       value: "Rock",
     });
     expect(mocks.onConflictDoUpdate).toHaveBeenCalledWith({
-      target: [
-        mocks.releaseOverrides.releaseId,
-        mocks.releaseOverrides.overrideType,
-      ],
+      target: [mocks.releaseOverrides.releaseId, mocks.releaseOverrides.overrideType],
       set: { value: "Rock" },
     });
     expect(mocks.run).toHaveBeenCalledTimes(1);

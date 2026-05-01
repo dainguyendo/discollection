@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import type { Release } from "../types";
 import { buildLocatedReleases } from "./locate";
 import type { OrganizedLibrary } from "./organize";

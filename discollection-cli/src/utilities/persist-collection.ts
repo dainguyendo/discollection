@@ -1,9 +1,5 @@
-import {
-  createDb,
-  ensureCollectionSchema,
-  resolveDbPath,
-  schema,
-} from "discollection-db";
+import { createDb, ensureCollectionSchema, resolveDbPath, schema } from "discollection-db";
+
 import logger from "../logger";
 import { GetReleasesResponse } from "../types";
 import { getReleaseFormat, getReleasePrimaryArtist } from "./release";
@@ -61,9 +57,7 @@ export function persistCollectionToDb(
         .find((item) => item.instanceId === release.instance_id);
 
       if (!persistedRelease) {
-        throw new Error(
-          `Failed to persist release instance ${release.instance_id}`,
-        );
+        throw new Error(`Failed to persist release instance ${release.instance_id}`);
       }
 
       const releaseId = persistedRelease.id;

@@ -1,7 +1,11 @@
 import { Release } from "../types";
 
-export function sortByArtist(a: any, b: any) {
-  return a.artist?.localeCompare(b.artist);
+interface HasArtist {
+  artist?: string;
+}
+
+export function sortByArtist(a: HasArtist, b: HasArtist) {
+  return a.artist?.localeCompare(b.artist ?? "") ?? 0;
 }
 
 export function sortReleaseByArtist(a: Release, b: Release) {

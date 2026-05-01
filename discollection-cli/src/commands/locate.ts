@@ -1,6 +1,13 @@
 import fs from "fs";
 import { stdout as output } from "node:process";
+
 import logger from "../logger";
+import { speakWithMacosSay } from "../speech/macos-say";
+import {
+  canUseWhisperVoiceMode,
+  resolveDefaultWhisperModelPath,
+  transcribeUtteranceWithWhisper,
+} from "../speech/whisper";
 import type { Release } from "../types";
 import { buildLocatedReleases, type LocatedRelease } from "../utilities/locate";
 import { createLocateSearcher } from "../utilities/locate-search";
@@ -10,12 +17,6 @@ import {
   type OrganizedLibrary,
 } from "../utilities/organize";
 import { getReleasePrimaryArtist } from "../utilities/release";
-import {
-  canUseWhisperVoiceMode,
-  resolveDefaultWhisperModelPath,
-  transcribeUtteranceWithWhisper,
-} from "../speech/whisper";
-import { speakWithMacosSay } from "../speech/macos-say";
 
 type LocateOptions = {
   collection?: string;
@@ -27,21 +28,15 @@ type LocateOptions = {
   once?: boolean;
 };
 
-function loadOrganizedCollectionFromFile(
-  collectionPath: string,
-): OrganizedLibrary {
+function loadOrganizedCollectionFromFile(collectionPath: string): OrganizedLibrary {
   if (!fs.existsSync(collectionPath)) {
     throw new Error(`Collection file not found at: ${collectionPath}`);
   }
 
-  const parsed = JSON.parse(
-    fs.readFileSync(collectionPath, "utf-8"),
-  ) as OrganizedLibrary;
+  const parsed = JSON.parse(fs.readFileSync(collectionPath, "utf-8")) as OrganizedLibrary;
 
   if (!parsed || typeof parsed !== "object") {
-    throw new Error(
-      "Collection file must contain an organized library JSON object.",
-    );
+    throw new Error("Collection file must contain an organized library JSON object.");
   }
 
   return parsed;
@@ -66,13 +61,9 @@ function releaseLabel(release: Release): string {
 }
 
 function formatMatchResponse(match: LocatedRelease): string {
-  const details = [match.format, match.genre, match.style]
-    .filter(Boolean)
-    .join(" / ");
+  const details = [match.format, match.genre, match.style].filter(Boolean).join(" / ");
 
-  const previous = match.previous
-    ? releaseLabel(match.previous)
-    : "start of section";
+  const previous = match.previous ? releaseLabel(match.previous) : "start of section";
   const next = match.next ? releaseLabel(match.next) : "end of section";
 
   return [
@@ -114,10 +105,7 @@ function maybeSpeak(message: string, options: LocateOptions): void {
   speakWithMacosSay(message, options.voice, speechRate);
 }
 
-async function getQueryFromVoice(
-  modelPath: string,
-  options: LocateOptions,
-): Promise<string> {
+async function getQueryFromVoice(modelPath: string, options: LocateOptions): Promise<string> {
   const availability = canUseWhisperVoiceMode();
 
   if (!availability.ok) {
@@ -141,10 +129,7 @@ async function getQueryFromVoice(
   return transcript;
 }
 
-export const locateAction = async (
-  queryArg: string | undefined,
-  options: LocateOptions,
-) => {
+export const locateAction = async (queryArg: string | undefined, options: LocateOptions) => {
   logger.info("Starting locate session", { collection: options.collection, options });
 
   const organized = options.collection
@@ -158,16 +143,14 @@ export const locateAction = async (
     const result = searcher.search(query);
 
     if (result.confidence === "requires-title") {
-      const message =
-        "Please say the release name so I can confidently match it.";
+      const message = "Please say the release name so I can confidently match it.";
       logger.info(message, { query, reason: result.reason });
       maybeSpeak(message, options);
       return;
     }
 
     if (!result.top) {
-      const message =
-        "No reliable match found. Please repeat the release name.";
+      const message = "No reliable match found. Please repeat the release name.";
       logger.info(message, { query, reason: result.reason });
       maybeSpeak(message, options);
       return;

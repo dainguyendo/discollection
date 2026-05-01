@@ -4,12 +4,14 @@ const loggerSingleton = () => {
   return new Logger();
 };
 
-declare const globalThis: {
-  logger: ReturnType<typeof loggerSingleton>;
-} & typeof global;
+type GlobalWithLogger = typeof globalThis & {
+  logger?: ReturnType<typeof loggerSingleton>;
+};
 
-const logger = globalThis.logger ?? loggerSingleton();
+const customGlobal = globalThis as GlobalWithLogger;
+
+const logger = customGlobal.logger ?? loggerSingleton();
 
 export default logger;
 
-if (process.env.NODE_ENV !== "production") globalThis.logger = logger;
+if (process.env.NODE_ENV !== "production") customGlobal.logger = logger;

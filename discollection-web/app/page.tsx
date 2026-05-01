@@ -1,11 +1,12 @@
 "use client";
 
-import { FractalBackground } from "@/components/FractalBackground";
-import { useCollectionStore } from "@/state/collection";
-import { InfiniteCanvasFlow } from "@/components/InfiniteCanvasFlow";
-import { SidePanel } from "@/components/SidePanel";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { toast } from "sonner";
+
+import { FractalBackground } from "@/components/FractalBackground";
+import { InfiniteCanvasFlow } from "@/components/InfiniteCanvasFlow";
+import { SidePanel } from "@/components/SidePanel";
+import { useCollectionStore } from "@/state/collection";
 
 export default function Home() {
   const { collection, set } = useCollectionStore();
@@ -65,21 +66,14 @@ export default function Home() {
         <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center px-6 py-16">
           <h1 className="empty-title font-mono">discollection</h1>
 
-          <div
+          <button
+            type="button"
             className={`empty-dropzone ${isDragging ? "empty-dropzone-active" : ""}`}
             onDragOver={handleDragOver}
             onDragEnter={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                inputRef.current?.click();
-              }
-            }}
           >
             <input
               ref={inputRef}
@@ -89,14 +83,10 @@ export default function Home() {
               onChange={handleFileChange}
             />
 
-            {isLoading && (
-              <p className="empty-dropzone-title">Loading collection...</p>
-            )}
+            {isLoading && <p className="empty-dropzone-title">Loading collection...</p>}
 
-            <p className="empty-dropzone-subtitle">
-              Drag and drop or click to choose a file.
-            </p>
-          </div>
+            <p className="empty-dropzone-subtitle">Drag and drop or click to choose a file.</p>
+          </button>
         </main>
       </div>
     );

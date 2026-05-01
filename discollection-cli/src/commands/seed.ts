@@ -1,5 +1,7 @@
 import fs from "fs";
+
 import { createDb, ensureCollectionSchema, schema } from "discollection-db";
+
 import logger from "../logger";
 import { Configuration } from "../types";
 
@@ -17,9 +19,7 @@ export function seedAction(options: SeedOptions): void {
 
   logger.info("Seeding organize configuration", { configPath });
 
-  const config = JSON.parse(
-    fs.readFileSync(configPath, "utf-8"),
-  ) as Configuration;
+  const config = JSON.parse(fs.readFileSync(configPath, "utf-8")) as Configuration;
 
   const db = createDb();
   ensureCollectionSchema(db);
@@ -52,9 +52,10 @@ export function seedAction(options: SeedOptions): void {
   }
 
   const subgroupData = subgroupValues.map((genre) => ({ genre }));
-  const consolidationData = Object.entries(consolidations).map(
-    ([style, value]) => ({ style, value }),
-  );
+  const consolidationData = Object.entries(consolidations).map(([style, value]) => ({
+    style,
+    value,
+  }));
 
   db.transaction((tx) => {
     tx.delete(schema.releaseOverrides).run();

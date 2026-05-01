@@ -1,13 +1,14 @@
 "use client";
 
+import { Music } from "lucide-react";
+import Image from "next/image";
 import { memo } from "react";
+import { toast } from "sonner";
+
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Release as ReleaseType } from "@/lib/types";
 import { getReleaseArtist } from "@/lib/utils";
-import { Music } from "lucide-react";
-import Image from "next/image";
-import { toast } from "sonner";
 
 interface ReleaseNodeProps {
   data: {
@@ -30,18 +31,13 @@ function ReleaseNodeComponent({ data }: ReleaseNodeProps) {
   const genres = release.basic_information.genres;
   const styles = release.basic_information.styles;
   const id = release.basic_information.id;
-  const discogs = new URL(
-    String(id),
-    "https://www.discogs.com/release/",
-  ).toString();
+  const discogs = new URL(String(id), "https://www.discogs.com/release/").toString();
 
   const handleBadgeClick = async (value: string) => {
     const command = `discollection release-override ${id} ${value}`;
     await navigator.clipboard.writeText(command);
     toast.success(`Copied to clipboard`, {
-      description: (
-        <code className="px-2 py-1 rounded text-xs font-mono">{command}</code>
-      ),
+      description: <code className="px-2 py-1 rounded text-xs font-mono">{command}</code>,
     });
   };
 
@@ -64,13 +60,7 @@ function ReleaseNodeComponent({ data }: ReleaseNodeProps) {
       <Card className="w-80 h-80 flex flex-col relative overflow-hidden group shadow-lg hover:shadow-xl transition-shadow bg-black/20 backdrop-blur-md border-white/10">
         <div className="absolute inset-0 z-0">
           {thumbnail ? (
-            <Image
-              src={thumbnail}
-              alt={title}
-              fill
-              sizes="320px"
-              className="object-cover"
-            />
+            <Image src={thumbnail} alt={title} fill sizes="320px" className="object-cover" />
           ) : (
             <div
               className="absolute inset-0 z-0 flex items-center justify-center"
@@ -123,9 +113,7 @@ function ReleaseNodeComponent({ data }: ReleaseNodeProps) {
                 className="block hover:underline nodrag nopan"
                 onClick={(event) => event.stopPropagation()}
               >
-                <span className="block font-bold text-sm line-clamp-2">
-                  {title}
-                </span>
+                <span className="block font-bold text-sm line-clamp-2">{title}</span>
                 <span className="block text-xs opacity-90">{artists}</span>
               </a>
             </div>

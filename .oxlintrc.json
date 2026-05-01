@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "plugins": ["typescript", "react", "import", "unicorn"],
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "no-console": "warn",
+    "no-debugger": "error",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ]
+  },
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/.next/**"]
+}

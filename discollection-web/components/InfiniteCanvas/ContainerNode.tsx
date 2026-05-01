@@ -24,13 +24,9 @@ function ContainerNodeComponent({ data }: ContainerNodeProps) {
   const labelStyle = LABEL_STYLES[data.level] ?? LABEL_STYLES.section;
 
   return (
-    <div
-      className={`w-full h-full rounded-xl border backdrop-blur-[2px] ${levelStyle}`}
-    >
+    <div className={`w-full h-full rounded-xl border backdrop-blur-[2px] ${levelStyle}`}>
       <div className="px-3 pt-2 pb-1">
-        <div
-          className={`text-xs uppercase tracking-widest font-medium ${labelStyle}`}
-        >
+        <div className={`text-xs uppercase tracking-widest font-medium ${labelStyle}`}>
           {data.label}
         </div>
       </div>

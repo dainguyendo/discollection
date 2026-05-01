@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { Release } from "../types";
+
 const mocks = vi.hoisted(() => ({
   logger: {
     error: vi.fn(),
@@ -10,7 +12,7 @@ vi.mock("../logger", () => ({
   default: mocks.logger,
 }));
 
-function makeRelease(overrides: Record<string, unknown> = {}): any {
+function makeRelease(overrides: Record<string, unknown> = {}): Release {
   return {
     id: 1,
     instance_id: 11,
@@ -36,9 +38,7 @@ function makeRelease(overrides: Record<string, unknown> = {}): any {
 
 describe("release utilities", () => {
   it("gets primary artist and title string", async () => {
-    const { getReleasePrimaryArtist, getReleaseTitleAndArtist } = await import(
-      "./release"
-    );
+    const { getReleasePrimaryArtist, getReleaseTitleAndArtist } = await import("./release");
 
     const release = makeRelease();
 

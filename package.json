@@ -1,20 +1,38 @@
 {
   "name": "discollection-monorepo",
-  "description": "Monorepo for Discogs collection tooling: a sync/organize CLI, shared SQLite+Drizzle DB package, and Next.js web viewer.",
   "private": true,
-  "dependencies": {
-    "discollection": "workspace:*"
-  },
+  "description": "Monorepo for Discogs collection tooling: a sync/organize CLI, shared SQLite+Drizzle DB package, and Next.js web viewer.",
   "scripts": {
     "build": "pnpm -r --if-present build",
     "build:watch": "pnpm -r --if-present build:watch",
     "compile": "pnpm -r --if-present compile",
     "dev:db:reset": "sh -c 'DB_PATH=\"${DISCOLLECTION_DB_PATH:-./discollection.db}\"; rm -f \"$DB_PATH\"; echo \"Reset DB at $DB_PATH\"'",
     "dev:seed": "sh -c 'CONFIG_PATH=\"${DISCOLLECTION_CONFIG_PATH:?Set DISCOLLECTION_CONFIG_PATH}\"; pnpm --filter discollection dev seed --config \"$CONFIG_PATH\"'",
-    "format": "pnpm -r --if-present format",
-    "format:fix": "pnpm -r --if-present format:fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --check .",
+    "format:fix": "oxfmt .",
     "test": "pnpm -r --if-present test",
     "start": "pnpm --filter discollection start",
-    "start:node": "pnpm --filter discollection start:node"
+    "start:node": "pnpm --filter discollection start:node",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "discollection": "workspace:*"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "oxfmt": "^0.47.0",
+    "oxlint": "^1.62.0"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}": [
+      "oxlint --fix",
+      "oxfmt"
+    ],
+    "*.{json,jsonc,md,yaml,yml,css,scss,html}": [
+      "oxfmt"
+    ]
   }
 }

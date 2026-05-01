@@ -1,18 +1,13 @@
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { HoverCard } from "@/components/ui/hover-card";
-import { Release as ReleaseType } from "@/lib/types";
-import { getReleaseArtist } from "@/lib/utils";
 import { Music } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { HoverCard } from "@/components/ui/hover-card";
+import { Release as ReleaseType } from "@/lib/types";
+import { getReleaseArtist } from "@/lib/utils";
 
 interface Props {
   release: ReleaseType;
@@ -30,9 +25,7 @@ export const Release = ({ release, variant = "default" }: Props) => {
     const command = `discollection release-override ${id} ${value}`;
     await navigator.clipboard.writeText(command);
     toast.success(`Copied to clipboard`, {
-      description: (
-        <code className="px-2 py-1 rounded text-xs font-mono">{command}</code>
-      ),
+      description: <code className="px-2 py-1 rounded text-xs font-mono">{command}</code>,
     });
   };
 
@@ -59,10 +52,7 @@ export const Release = ({ release, variant = "default" }: Props) => {
 
   return (
     <HoverCard key={id}>
-      <Card
-        id={`release-${id}`}
-        className="h-full flex flex-col relative overflow-hidden group"
-      >
+      <Card id={`release-${id}`} className="h-full flex flex-col relative overflow-hidden group">
         <div className="absolute inset-0 z-0">
           {thumbnail ? (
             <Image
@@ -99,9 +89,7 @@ export const Release = ({ release, variant = "default" }: Props) => {
               </div>
               <div className="flex flex-col items-center justify-center text-white">
                 <Music className="w-16 h-16 mb-4 opacity-80" />
-                <div className="text-xl font-medium text-center opacity-80">
-                  {title}
-                </div>
+                <div className="text-xl font-medium text-center opacity-80">{title}</div>
                 <div className="text-lg opacity-60">{artists}</div>
               </div>
             </div>
@@ -141,9 +129,7 @@ export const Release = ({ release, variant = "default" }: Props) => {
           </CardContent>
           <CardHeader>
             <Link href={discogs.toString()}>
-              <CardTitle className="text-white text-md text-nowrap truncate">
-                {title}
-              </CardTitle>
+              <CardTitle className="text-white text-md text-nowrap truncate">{title}</CardTitle>
               <CardDescription className="text-sm text-white/90 text-nowrap truncate">
                 {artists}
               </CardDescription>

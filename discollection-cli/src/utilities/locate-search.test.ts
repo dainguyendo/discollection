@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import type { Release } from "../types";
 import { buildLocatedReleases } from "./locate";
 import { createLocateSearcher } from "./locate-search";
@@ -40,10 +41,7 @@ function makeRelease(id: number, title: string, artist: string): Release {
 function makeSearcher() {
   const library: OrganizedLibrary = {
     "12": {
-      Rock: [
-        makeRelease(1, "Back in Black", "AC/DC"),
-        makeRelease(2, "Paranoid", "Black Sabbath"),
-      ],
+      Rock: [makeRelease(1, "Back in Black", "AC/DC"), makeRelease(2, "Paranoid", "Black Sabbath")],
     },
   };
 

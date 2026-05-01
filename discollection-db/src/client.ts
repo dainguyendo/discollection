@@ -1,11 +1,10 @@
-import Database from "better-sqlite3";
-import {
-  drizzle,
-  type BetterSQLite3Database,
-} from "drizzle-orm/better-sqlite3";
-import { sql } from "drizzle-orm";
 import fs from "fs";
 import path from "path";
+
+import Database from "better-sqlite3";
+import { sql } from "drizzle-orm";
+import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+
 import * as schema from "./schema";
 
 export type DiscollectionDb = BetterSQLite3Database<typeof schema>;
@@ -16,9 +15,7 @@ export type CreateDbOptions = {
 };
 
 export function resolveDbPath(filePath?: string): string {
-  return (
-    filePath ?? process.env["DISCOLLECTION_DB_PATH"] ?? "./discollection.db"
-  );
+  return filePath ?? process.env["DISCOLLECTION_DB_PATH"] ?? "./discollection.db";
 }
 
 export function createDb(options: CreateDbOptions = {}): DiscollectionDb {
