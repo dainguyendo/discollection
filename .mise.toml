@@ -1,0 +1,14 @@
+[tools]
+node = "22.22.0"
+pnpm = "9.6.0"
+
+# Voice locate dependencies (macOS)
+# Homebrew packages use latest; tested versions noted below
+# ffmpeg tested: 8.0.1
+# whisper-cpp tested: 1.8.4
+"brew:ffmpeg" = "latest"
+"brew:whisper-cpp" = "latest"
+
+[env]
+# Uncomment to set default DB path
+# DISCOLLECTION_DB_PATH = "./discollection.db"

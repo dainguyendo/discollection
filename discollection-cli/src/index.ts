@@ -20,7 +20,8 @@ function main() {
   cli.command("sync").action(syncAction);
 
   cli
-    .command("locate <collectionPath> [query]")
+    .command("locate [query]")
+    .option("--collection <path>", "Path to organized collection JSON (default: organize from DB)")
     .option("--lang <code>", "Language code for whisper (default: en)")
     .option("--no-speak", "Disable spoken response output")
     .option("--voice <name>", "macOS say voice override (default: Samantha)")

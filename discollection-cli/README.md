@@ -7,11 +7,12 @@ CLI to sync a Discogs collection into SQLite and generate organized JSON output.
 - `sync`: pull collection data from Discogs into local DB.
 - `seed --config <path>`: store overrides and organize config in DB.
 - `organize <output> [--config <path>]`: generate organized JSON from DB.
-- `locate <collectionPath> [query]`: locate a release in an organized collection JSON using the current voice-first workflow.
+- `locate [query]`: locate a release in an organized collection. Uses `--collection <path>` for a specific JSON file, otherwise organizes fresh from the database.
 - `release-override <releaseId> <overrideValue>`: add/update one release override row in DB. Override type is inferred: values matching official Discogs genres are saved as `genre`, otherwise as `style`.
 
 ### `locate` options
 
+- `--collection <path>`: path to an organized collection JSON. If omitted, organizes from the database.
 - `--lang <code>`: Whisper language code. Default: `en`.
 - `--no-speak`: print results without reading them aloud through macOS `say`.
 - `--voice <name>`: macOS `say` voice override. Default: `Samantha`.
@@ -37,7 +38,18 @@ export DISCOLLECTION_DB_PATH="./tmp/discollection.db"
 
 Voice capture mode requires local voice dependencies. Text queries can run without Whisper.
 
-Install runtime dependencies on macOS:
+### Using mise (recommended)
+
+From the repo root, mise installs all dependencies including ffmpeg and whisper-cpp:
+
+```bash
+mise install
+whisper-download-ggml-model base.en
+```
+
+### Manual installation
+
+If not using mise, install runtime dependencies on macOS:
 
 ```bash
 brew install ffmpeg whisper-cpp
@@ -68,26 +80,26 @@ pnpm --filter discollection dev seed --config /absolute/path/to/config.discollec
 pnpm --filter discollection dev release-override 12345 Rock
 pnpm --filter discollection dev release-override 12345 "Hard Rock"
 pnpm --filter discollection dev organize ./tmp/organized.json
-pnpm --filter discollection dev locate ./tmp/organized.json --once --voice Daniel --speech-rate 200
+pnpm --filter discollection dev locate --collection ./tmp/organized.json --once --voice Daniel --speech-rate 200
 ```
 
 Run a single text lookup against an existing organized export:
 
 ```bash
-pnpm --filter discollection dev locate ./tmp/organized.json "Kind of Blue"
+pnpm --filter discollection dev locate "Kind of Blue" --collection ./tmp/organized.json
 ```
 
 Run the continuous voice loop and say `stop listening` to exit:
 
 ```bash
-pnpm --filter discollection dev locate ./tmp/organized.json --voice Daniel --speech-rate 200
+pnpm --filter discollection dev locate --collection ./tmp/organized.json --voice Daniel --speech-rate 200
 ```
 
 Run built CLI binary:
 
 ```bash
 pnpm --filter discollection start -- organize ./tmp/organized.json
-pnpm --filter discollection start -- locate ./tmp/organized.json --once
+pnpm --filter discollection start -- locate --collection ./tmp/organized.json --once
 ```
 
 ## Config File Schema

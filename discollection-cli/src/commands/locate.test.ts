@@ -75,6 +75,15 @@ vi.mock("../utilities/locate-search", () => ({
   createLocateSearcher: mocks.createLocateSearcher,
 }));
 
+vi.mock("../utilities/organize", () => ({
+  loadOrganizeDataFromDb: () => ({
+    collection: [],
+    overrides: { genre: {}, style: {} },
+    dbConfig: { subgroup: [], consolidate: {} },
+  }),
+  buildOrganizedLibrary: () => ({}),
+}));
+
 vi.mock("../utilities/release", () => ({
   getReleasePrimaryArtist: (release: { basic_information: { artists?: Array<{ name: string }> } }) =>
     release.basic_information.artists?.[0]?.name,
@@ -98,7 +107,7 @@ describe("locateAction", () => {
   it("runs text queries without requiring whisper dependencies", async () => {
     const { locateAction } = await import("./locate");
 
-    await locateAction("./organized.json", "kind of blue", { speak: false });
+    await locateAction("kind of blue", { collection: "./organized.json", speak: false });
 
     expect(mocks.canUseWhisperVoiceMode).not.toHaveBeenCalled();
     expect(mocks.resolveDefaultWhisperModelPath).not.toHaveBeenCalled();
