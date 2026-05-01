@@ -8,6 +8,15 @@ Monorepo for Discogs collection tooling: a CLI for syncing, organizing, and loca
 - `discollection-db` ([discollection-db/README.md](discollection-db/README.md)): SQLite + Drizzle schema/client package used by the CLI.
 - `discollection-web` ([discollection-web/README.md](discollection-web/README.md)): Next.js viewer for organized JSON exports with search and graph navigation.
 
+## User Guides
+
+Workflow guides for managing your physical vinyl collection: **Crate → File → Dig**
+
+- [Full User Guide](docs/USER_GUIDE.md) — Complete walkthrough with diagrams
+- [Crate](docs/guides/01-crate.md) — Sync new records from Discogs
+- [File](docs/guides/02-file.md) — Organize your shelves
+- [Dig](docs/guides/03-dig.md) — Find where records belong
+
 ## Quick Start
 
 ```bash
