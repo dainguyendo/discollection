@@ -19,6 +19,19 @@ Workflow guides for managing your physical vinyl collection: **Crate â†’ File â†
 
 ## Quick Start
 
+### Prerequisites
+
+Install [mise](https://mise.jdx.dev/) to manage tool versions:
+
+```bash
+curl https://mise.run | sh
+mise install
+```
+
+This installs Node.js, pnpm, and voice dependencies (ffmpeg, whisper-cpp) at the pinned versions.
+
+### Build
+
 ```bash
 pnpm install
 pnpm build

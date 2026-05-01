@@ -37,7 +37,18 @@ export DISCOLLECTION_DB_PATH="./tmp/discollection.db"
 
 Voice capture mode requires local voice dependencies. Text queries can run without Whisper.
 
-Install runtime dependencies on macOS:
+### Using mise (recommended)
+
+From the repo root, mise installs all dependencies including ffmpeg and whisper-cpp:
+
+```bash
+mise install
+whisper-download-ggml-model base.en
+```
+
+### Manual installation
+
+If not using mise, install runtime dependencies on macOS:
 
 ```bash
 brew install ffmpeg whisper-cpp
