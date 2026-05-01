@@ -25,9 +25,9 @@ describe("api.list", () => {
     process.env.DISCOGS_USER = "user";
     process.env.DISCOGS_FOLDER_ID = "0";
     process.env.DISCOGS_PERSONAL_ACCESS_TOKEN = "token";
-    vi.spyOn(global, "setTimeout").mockImplementation((handler: any) => {
+    vi.spyOn(global, "setTimeout").mockImplementation((handler: () => void) => {
       handler();
-      return 0 as any;
+      return 0 as unknown as ReturnType<typeof setTimeout>;
     });
   });
 

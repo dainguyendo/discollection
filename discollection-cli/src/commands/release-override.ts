@@ -1,4 +1,5 @@
 import { createDb, ensureCollectionSchema, schema } from "discollection-db";
+
 import logger from "../logger";
 
 const DISCOGS_GENRE_GUIDELINE_URL =
@@ -30,10 +31,7 @@ function inferOverrideType(value: string): OverrideType {
   return OFFICIAL_DISCOGS_GENRES.has(normalized) ? "genre" : "style";
 }
 
-export function releaseOverrideAction(
-  releaseIdText: string,
-  overrideValue: string,
-): void {
+export function releaseOverrideAction(releaseIdText: string, overrideValue: string): void {
   const releaseId = Number(releaseIdText);
 
   if (!Number.isInteger(releaseId) || releaseId <= 0) {
@@ -59,10 +57,7 @@ export function releaseOverrideAction(
       value,
     })
     .onConflictDoUpdate({
-      target: [
-        schema.releaseOverrides.releaseId,
-        schema.releaseOverrides.overrideType,
-      ],
+      target: [schema.releaseOverrides.releaseId, schema.releaseOverrides.overrideType],
       set: { value },
     })
     .run();

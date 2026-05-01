@@ -21,13 +21,7 @@
     "strict": true,
     "target": "ES2022"
   },
-  "exclude": [
-    "dist",
-    "bundle",
-    "node_modules"
-  ],
+  "exclude": ["dist", "bundle", "node_modules"],
   "extends": "@tsconfig/node20/tsconfig.json",
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

@@ -1,4 +1,5 @@
 import Fuse from "fuse.js";
+
 import type { LocatedRelease } from "./locate";
 
 type SearchDoc = {
@@ -117,9 +118,7 @@ export function createLocateSearcher(entries: LocatedRelease[]) {
       titleArtist: `${title} ${artist}`.trim(),
       genres: release.basic_information.genres.join(" "),
       styles: release.basic_information.styles.join(" "),
-      labels: release.basic_information.labels
-        .map((label) => label.name)
-        .join(" "),
+      labels: release.basic_information.labels.map((label) => label.name).join(" "),
       located: entry,
     };
   });
@@ -204,9 +203,7 @@ export function createLocateSearcher(entries: LocatedRelease[]) {
       if (eligible.length === 0) {
         return {
           confidence: "requires-title",
-          candidates: ranked
-            .slice(0, 3)
-            .map((candidate) => candidate.item.located),
+          candidates: ranked.slice(0, 3).map((candidate) => candidate.item.located),
           reason: "Transcript did not include enough release-title evidence.",
         };
       }
@@ -241,20 +238,14 @@ export function createLocateSearcher(entries: LocatedRelease[]) {
         confidence = "medium";
       }
 
-      if (
-        confidence === "medium" &&
-        titleEvidence.titleCoverage >= 0.9 &&
-        scoreGap >= 0.03
-      ) {
+      if (confidence === "medium" && titleEvidence.titleCoverage >= 0.9 && scoreGap >= 0.03) {
         confidence = "high";
       }
 
       return {
         confidence,
         top: top.item.located,
-        candidates: eligible
-          .slice(0, 3)
-          .map((candidate) => candidate.item.located),
+        candidates: eligible.slice(0, 3).map((candidate) => candidate.item.located),
         reason:
           `Top score: ${topScore.toFixed(3)}, gap: ${scoreGap.toFixed(3)}, ` +
           `title coverage: ${titleEvidence.titleCoverage.toFixed(3)}`,

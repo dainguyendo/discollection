@@ -1,8 +1,9 @@
-import groupBy from "lodash/groupBy.js";
 import { createDb, ensureCollectionSchema, schema } from "discollection-db";
+import groupBy from "lodash/groupBy.js";
+
 import { Configuration, GetReleasesResponse, Release } from "../types";
-import { sortReleaseByArtist } from "./sort";
 import { getReleaseFormat, getReleaseGenre, getReleaseStyle } from "./release";
+import { sortReleaseByArtist } from "./sort";
 
 export type OrganizedLibrary = Record<
   string,
@@ -26,9 +27,7 @@ export function loadOrganizeDataFromDb(): OrganizeDbData {
   const subgroupRows = db.select().from(schema.configSubgroups).all();
   const consolidationRows = db.select().from(schema.configConsolidations).all();
 
-  const releasesByLocalId = new Map(
-    releases.map((release) => [release.id, release]),
-  );
+  const releasesByLocalId = new Map(releases.map((release) => [release.id, release]));
   const releasesByDiscogsId = new Map(
     releases.map((release) => [release.discogsReleaseId, release]),
   );
@@ -41,15 +40,13 @@ export function loadOrganizeDataFromDb(): OrganizeDbData {
 
   for (const override of overrides) {
     const release =
-      releasesByLocalId.get(override.releaseId) ??
-      releasesByDiscogsId.get(override.releaseId);
+      releasesByLocalId.get(override.releaseId) ?? releasesByDiscogsId.get(override.releaseId);
 
     if (!release) {
       continue;
     }
 
-    const target =
-      override.overrideType === "genre" ? genreOverrides : styleOverrides;
+    const target = override.overrideType === "genre" ? genreOverrides : styleOverrides;
 
     target[release.discogsReleaseId] = override.value;
   }
@@ -61,9 +58,7 @@ export function loadOrganizeDataFromDb(): OrganizeDbData {
     },
     dbConfig: {
       subgroup: subgroupRows.map(({ genre }) => genre),
-      consolidate: Object.fromEntries(
-        consolidationRows.map(({ style, value }) => [style, value]),
-      ),
+      consolidate: Object.fromEntries(consolidationRows.map(({ style, value }) => [style, value])),
     },
     collection: releases.map((release) => ({
       id: release.discogsReleaseId,
@@ -101,10 +96,10 @@ export function loadOrganizeDataFromDb(): OrganizeDbData {
             ]
           : [],
         genres: (genresByReleaseId[release.id] ?? [])
-          .sort((left, right) => left.id - right.id)
+          .toSorted((left, right) => left.id - right.id)
           .map(({ genre }) => genre),
         styles: (stylesByReleaseId[release.id] ?? [])
-          .sort((left, right) => left.id - right.id)
+          .toSorted((left, right) => left.id - right.id)
           .map(({ style }) => style),
       },
       notes: [],
@@ -120,9 +115,7 @@ export function buildOrganizedLibrary(
   const formatGrouping = groupBy(collection, getReleaseFormat);
 
   Object.entries(formatGrouping).forEach(([format, releases]) => {
-    const genreGrouping = groupBy(releases, (release) =>
-      getReleaseGenre(release, 0, config),
-    );
+    const genreGrouping = groupBy(releases, (release) => getReleaseGenre(release, 0, config));
 
     Object.entries(genreGrouping).forEach(([genre, groupedReleases]) => {
       if (config?.subgroup.includes(genre)) {
@@ -134,7 +127,7 @@ export function buildOrganizedLibrary(
         if (Object.values(styleGrouping).every((r) => r.length === 1)) {
           library[format] = {
             ...library[format],
-            [genre]: groupedReleases.sort(sortReleaseByArtist),
+            [genre]: groupedReleases.toSorted(sortReleaseByArtist),
           };
 
           return;
@@ -142,7 +135,7 @@ export function buildOrganizedLibrary(
 
         const sorted = Object.entries(styleGrouping).reduce(
           (acc, [style, releasesForStyle]) => {
-            acc[style] = releasesForStyle.sort(sortReleaseByArtist);
+            acc[style] = releasesForStyle.toSorted(sortReleaseByArtist);
             return acc;
           },
           {} as Record<string, Release[]>,
@@ -155,7 +148,7 @@ export function buildOrganizedLibrary(
         };
       } else {
         // sort by artist then title
-        const sorted = groupedReleases.sort(sortReleaseByArtist);
+        const sorted = groupedReleases.toSorted(sortReleaseByArtist);
 
         // then attach to library
         library[format] = {

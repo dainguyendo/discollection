@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+
+import { Release } from "../types";
 import { sortByArtist, sortReleaseByArtist } from "./sort";
 
 describe("sort utilities", () => {
@@ -11,8 +13,8 @@ describe("sort utilities", () => {
   });
 
   it("sortReleaseByArtist compares release primary artist", () => {
-    const a: any = { basic_information: { artists: [{ name: "ABBA" }] } };
-    const b: any = { basic_information: { artists: [{ name: "Queen" }] } };
+    const a = { basic_information: { artists: [{ name: "ABBA" }] } } as Release;
+    const b = { basic_information: { artists: [{ name: "Queen" }] } } as Release;
 
     expect(sortReleaseByArtist(a, b)).toBe(-1);
     expect(sortReleaseByArtist(b, a)).toBe(1);

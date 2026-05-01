@@ -1,7 +1,7 @@
+import { spawnSync } from "child_process";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { spawnSync } from "child_process";
 
 export type WhisperTranscriptionOptions = {
   modelPath: string;
@@ -17,13 +17,7 @@ function defaultModelCandidates(): string[] {
 
   return [
     envPath,
-    path.join(
-      os.homedir(),
-      "Library",
-      "Caches",
-      "whisper",
-      DEFAULT_WHISPER_MODEL_NAME,
-    ),
+    path.join(os.homedir(), "Library", "Caches", "whisper", DEFAULT_WHISPER_MODEL_NAME),
     path.join(os.homedir(), ".cache", "whisper", DEFAULT_WHISPER_MODEL_NAME),
     path.join(process.cwd(), "models", DEFAULT_WHISPER_MODEL_NAME),
   ].filter((value): value is string => Boolean(value));
@@ -89,23 +83,14 @@ export function canUseWhisperVoiceMode(whisperCliPath = "whisper-cli"): {
   return { ok: true };
 }
 
-export function transcribeUtteranceWithWhisper(
-  options: WhisperTranscriptionOptions,
-): string {
-  const {
-    modelPath,
-    lang,
-    durationSeconds = 4,
-    whisperCliPath = "whisper-cli",
-  } = options;
+export function transcribeUtteranceWithWhisper(options: WhisperTranscriptionOptions): string {
+  const { modelPath, lang, durationSeconds = 4, whisperCliPath = "whisper-cli" } = options;
 
   if (!fs.existsSync(modelPath)) {
     throw new Error(`Whisper model file not found at: ${modelPath}`);
   }
 
-  const tmpDir = fs.mkdtempSync(
-    path.join(os.tmpdir(), "discollection-whisper-"),
-  );
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "discollection-whisper-"));
   const wavPath = path.join(tmpDir, "input.wav");
   const outBasePath = path.join(tmpDir, "transcript");
 
@@ -135,18 +120,7 @@ export function transcribeUtteranceWithWhisper(
 
     const transcribe = spawnSync(
       whisperCliPath,
-      [
-        "-m",
-        modelPath,
-        "-f",
-        wavPath,
-        "-l",
-        lang,
-        "-nt",
-        "-of",
-        outBasePath,
-        "-otxt",
-      ],
+      ["-m", modelPath, "-f", wavPath, "-l", lang, "-nt", "-of", outBasePath, "-otxt"],
       { encoding: "utf-8" },
     );
 
@@ -168,7 +142,7 @@ export function transcribeUtteranceWithWhisper(
 
     // Whisper emits bracket/paren-wrapped tokens like [BLANK_AUDIO] or [MUSIC PLAYING]
     // when no intelligible speech is detected — treat all of them as empty.
-    if (/^[\[(].*[\])]$|^$/.test(raw)) {
+    if (/^[[(].*[\])]$|^$/.test(raw)) {
       return "";
     }
 

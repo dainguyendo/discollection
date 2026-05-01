@@ -1,5 +1,9 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { ChangeEvent } from "react";
+
 import {
   Sidebar,
   SidebarContent,
@@ -10,18 +14,16 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { useCollectionStore } from "@/state/collection";
-import { ChangeEvent } from "react";
-import { Input } from "./input";
-import { Tabs, TabsList, TabsTrigger } from "./tabs";
-import { useTheme } from "next-themes";
+
+import { Button } from "./button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { Button } from "./button";
-import { Moon, Sun } from "lucide-react";
+import { Input } from "./input";
+import { Tabs, TabsList, TabsTrigger } from "./tabs";
 
 export function AppSidebar() {
   const { setTheme } = useTheme();
@@ -31,12 +33,12 @@ export function AppSidebar() {
     const file = event?.target?.files?.[0] as File;
     const reader = new FileReader();
 
-    reader.onload = async (e) => {
-      const data = JSON.parse(e.target?.result as string);
+    reader.addEventListener("load", async (e) => {
+      const data = JSON.parse((e.target as FileReader)?.result as string);
       set(data);
 
       event.target.value = "";
-    };
+    });
 
     reader.readAsText(file);
   };
@@ -66,9 +68,9 @@ export function AppSidebar() {
                 onValueChange={(value) => setFormat(Number(value))}
               >
                 <TabsList className="w-full justify-evenly">
-                  {formats.map((format) => (
-                    <TabsTrigger key={format} value={format}>
-                      {format} &quot;
+                  {formats.map((formatKey) => (
+                    <TabsTrigger key={formatKey} value={formatKey}>
+                      {formatKey} &quot;
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -99,15 +101,9 @@ export function AppSidebar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  System
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarGroupContent>
@@ -124,16 +120,10 @@ interface CollectionOverviewTreeProps {
   parent?: string;
 }
 
-const CollectionOverviewTree = ({
-  data,
-  level = 1,
-  parent = "",
-}: CollectionOverviewTreeProps) => {
+const CollectionOverviewTree = ({ data, level = 1, parent = "" }: CollectionOverviewTreeProps) => {
   return Object.entries(data).map(([key, node]) => {
     if (Array.isArray(node)) {
-      const href = parent
-        ? `${parent}-${key}`.toLocaleLowerCase()
-        : key.toLocaleLowerCase();
+      const href = parent ? `${parent}-${key}`.toLocaleLowerCase() : key.toLocaleLowerCase();
       return (
         <div key={key + level} className={`px-${level + 1}`}>
           <a href={`#${href}`}>

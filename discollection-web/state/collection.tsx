@@ -1,4 +1,5 @@
 import { create } from "zustand";
+
 import { Collection, Release } from "@/lib/types";
 
 interface State {
@@ -9,9 +10,7 @@ interface State {
   clear: () => void;
 
   filtered: Array<Release["id"]> | null;
-  setFiltered: (
-    filtered: Array<Release["basic_information"]["id"]> | null,
-  ) => void;
+  setFiltered: (filtered: Array<Release["basic_information"]["id"]> | null) => void;
 
   focusNodeId: string | null;
   setFocusNodeId: (id: string | null) => void;

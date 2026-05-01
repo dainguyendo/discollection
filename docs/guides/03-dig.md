@@ -46,13 +46,13 @@ Between: A Love Supreme | Brilliant Corners
 
 ## Voice Options
 
-| Option | What it does |
-|--------|--------------|
+| Option                | What it does                |
+| --------------------- | --------------------------- |
 | `--collection <path>` | Use existing organized JSON |
-| `--voice Samantha` | Change speaking voice |
-| `--speech-rate 180` | Slower/faster speech |
-| `--no-speak` | Text output only |
-| `--once` | Exit after one query |
+| `--voice Samantha`    | Change speaking voice       |
+| `--speech-rate 180`   | Slower/faster speech        |
+| `--no-speak`          | Text output only            |
+| `--once`              | Exit after one query        |
 
 ## Example
 

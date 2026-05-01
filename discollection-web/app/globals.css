@@ -114,7 +114,12 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at center, rgba(9, 12, 30, 0) 34%, rgba(7, 9, 22, 0.34) 78%, rgba(5, 7, 18, 0.62) 100%),
+    radial-gradient(
+      circle at center,
+      rgba(9, 12, 30, 0) 34%,
+      rgba(7, 9, 22, 0.34) 78%,
+      rgba(5, 7, 18, 0.62) 100%
+    ),
     linear-gradient(180deg, rgba(11, 14, 34, 0.16) 0%, rgba(8, 11, 26, 0.4) 100%);
 }
 
@@ -143,7 +148,10 @@ body {
     0 18px 38px rgba(2, 4, 12, 0.5),
     inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   cursor: pointer;
-  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .empty-dropzone:hover {
@@ -239,5 +247,8 @@ body {
 }
 
 .canvas-transparent-pane .react-flow__minimap-node {
-  transition: fill 160ms ease, stroke 160ms ease, opacity 160ms ease;
+  transition:
+    fill 160ms ease,
+    stroke 160ms ease,
+    opacity 160ms ease;
 }

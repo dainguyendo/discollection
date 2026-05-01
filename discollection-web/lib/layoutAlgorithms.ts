@@ -51,18 +51,12 @@ export function sanitizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 }
 
-function buildReleaseShelf(
-  releases: Release[],
-  parentId: string,
-  path: string[],
-): BuildResult {
+function buildReleaseShelf(releases: Release[], parentId: string, path: string[]): BuildResult {
   const columns = Math.max(1, Math.min(MAX_RELEASES_PER_ROW, releases.length));
   const rows = Math.max(1, Math.ceil(releases.length / columns));
 
-  const contentWidth =
-    columns * RELEASE_WIDTH + Math.max(0, columns - 1) * RELEASE_GAP_X;
-  const contentHeight =
-    rows * RELEASE_HEIGHT + Math.max(0, rows - 1) * RELEASE_GAP_Y;
+  const contentWidth = columns * RELEASE_WIDTH + Math.max(0, columns - 1) * RELEASE_GAP_X;
+  const contentHeight = rows * RELEASE_HEIGHT + Math.max(0, rows - 1) * RELEASE_GAP_Y;
 
   const width = SECTION_PADDING * 2 + contentWidth;
   const height = SECTION_HEADER_HEIGHT + SECTION_PADDING * 2 + contentHeight;
@@ -87,10 +81,7 @@ function buildReleaseShelf(
       },
       position: {
         x: SECTION_PADDING + col * (RELEASE_WIDTH + RELEASE_GAP_X),
-        y:
-          SECTION_HEADER_HEIGHT +
-          SECTION_PADDING +
-          row * (RELEASE_HEIGHT + RELEASE_GAP_Y),
+        y: SECTION_HEADER_HEIGHT + SECTION_PADDING + row * (RELEASE_HEIGHT + RELEASE_GAP_Y),
       },
     };
   });
@@ -130,10 +121,7 @@ function buildSectionNode(
 
       result.nodes.forEach((childNode) => {
         // Root node of this child section gets repositioned in the parent stack.
-        if (
-          childNode.id ===
-          `section-${[...path, childLabel].map(sanitizeKey).join("-")}`
-        ) {
+        if (childNode.id === `section-${[...path, childLabel].map(sanitizeKey).join("-")}`) {
           childNode.position = {
             x: SECTION_PADDING,
             y: currentY,
@@ -198,16 +186,14 @@ export function buildCanvasGraph(collection: Collection): {
   nodes: CanvasNode[];
   edges: CanvasEdge[];
 } {
-  const formatKeys = Object.keys(collection).sort(
-    (a, b) => Number(b) - Number(a),
-  );
+  const formatKeys = Object.keys(collection).toSorted((a, b) => Number(b) - Number(a));
   const allNodes: CanvasNode[] = [];
   let currentY = ROOT_Y;
 
   formatKeys.forEach((formatKey) => {
     const formatData = collection[formatKey];
     const result = buildSectionNode(
-      `${formatKey}\" Records`,
+      `${formatKey}" Records`,
       formatData as Record<string, unknown>,
       null,
       [formatKey],

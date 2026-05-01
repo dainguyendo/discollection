@@ -1,15 +1,10 @@
 import fs from "fs";
-import logger from "../logger";
-import {
-  buildOrganizedLibrary,
-  loadOrganizeDataFromDb,
-} from "../utilities/organize";
-import type { Configuration } from "../types";
 
-export const organizeAction = async (
-  output: string,
-  options: { config?: string },
-) => {
+import logger from "../logger";
+import type { Configuration } from "../types";
+import { buildOrganizedLibrary, loadOrganizeDataFromDb } from "../utilities/organize";
+
+export const organizeAction = async (output: string, options: { config?: string }) => {
   logger.info("Organizing collection", { options });
 
   let fileSubgroup: Configuration["subgroup"] | undefined;

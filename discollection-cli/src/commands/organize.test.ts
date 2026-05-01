@@ -88,9 +88,7 @@ describe("organizeAction", () => {
     const { organizeAction } = await import("./organize");
     await organizeAction("", {});
 
-    expect(mocks.logger.error).toHaveBeenCalledWith(
-      "No output file specified. Exiting.",
-    );
+    expect(mocks.logger.error).toHaveBeenCalledWith("No output file specified. Exiting.");
     expect(mocks.writeFileSync).not.toHaveBeenCalled();
   });
 });

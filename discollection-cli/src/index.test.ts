@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => {
-  const command = vi.fn((name: string) => {
+  const command = vi.fn((_name: string) => {
     const chain = {
       option: vi.fn(() => chain),
       action: vi.fn(() => chain),
@@ -27,9 +27,7 @@ describe("main", () => {
     expect(mocks.command).toHaveBeenCalledWith("organize <output>");
     expect(mocks.command).toHaveBeenCalledWith("seed");
     expect(mocks.command).toHaveBeenCalledWith("sync");
-    expect(mocks.command).toHaveBeenCalledWith(
-      "release-override <releaseId> <overrideValue>",
-    );
+    expect(mocks.command).toHaveBeenCalledWith("release-override <releaseId> <overrideValue>");
     expect(mocks.help).toHaveBeenCalledTimes(1);
     expect(built).toBe(mocks.cli);
   });

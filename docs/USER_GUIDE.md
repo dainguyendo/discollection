@@ -25,7 +25,7 @@ flowchart LR
     A[🛒 Purchase Vinyl] --> B[📱 Add to Discogs]
     B --> C[💻 Run Sync]
     C --> D[💾 Local Database]
-    
+
     style A fill:#e8f5e9
     style B fill:#fff3e0
     style C fill:#e3f2fd
@@ -34,10 +34,10 @@ flowchart LR
 
 ### Steps
 
-| Step | Action |
-|:----:|--------|
-| 1 | **Add to Discogs** — Log into your Discogs account and add releases to your collection |
-| 2 | **Sync locally** — Run the sync command to pull your updated collection |
+| Step | Action                                                                                 |
+| :--: | -------------------------------------------------------------------------------------- |
+|  1   | **Add to Discogs** — Log into your Discogs account and add releases to your collection |
+|  2   | **Sync locally** — Run the sync command to pull your updated collection                |
 
 ```bash
 discollection sync
@@ -59,14 +59,14 @@ flowchart TB
         A1[Define genres to subgroup by style]
         A2[Define style consolidations]
     end
-    
+
     subgraph Output["📁 Organization"]
         B1[Run organize command]
         B2[Generates JSON structure]
     end
-    
+
     Config --> Output
-    
+
     B2 --> C1["📀 Format"]
     C1 --> C2["🎵 Genre"]
     C2 --> C3["🎸 Style (if subgrouped)"]
@@ -112,6 +112,7 @@ Use **discollection-web** to browse your organized collection visually:
 Need to recategorize a release?
 
 **Via Web (fastest):**
+
 1. Find the release in discollection-web
 2. Click any **genre or style badge** on the release card
 3. The `release-override` command is copied to your clipboard
@@ -123,7 +124,7 @@ Need to recategorize a release?
 # Override genre
 discollection release-override 12345 "Rock"
 
-# Override style  
+# Override style
 discollection release-override 12345 "Hard Rock"
 ```
 
@@ -141,11 +142,11 @@ flowchart LR
         A1["⌨️ Text"]
         A2["🎤 Voice"]
     end
-    
+
     Input --> B[Match Release]
     B --> C["📍 Section & Position"]
     C --> D["↔️ Neighboring Records"]
-    
+
     style A1 fill:#e3f2fd
     style A2 fill:#fff3e0
     style C fill:#e8f5e9
@@ -159,6 +160,7 @@ discollection locate ./my-collection.json "Kind of Blue"
 ```
 
 **Output:**
+
 ```
 Match: Miles Davis - Kind of Blue
 Section: LP / Jazz
@@ -176,12 +178,12 @@ discollection locate ./my-collection.json
 
 **Options:**
 
-| Flag | Purpose | Example |
-|------|---------|---------|
-| `--once` | Single query, then exit | `--once` |
-| `--voice` | Choose macOS voice | `--voice Daniel` |
-| `--speech-rate` | Words per minute | `--speech-rate 180` |
-| `--no-speak` | Text output only | `--no-speak` |
+| Flag            | Purpose                 | Example             |
+| --------------- | ----------------------- | ------------------- |
+| `--once`        | Single query, then exit | `--once`            |
+| `--voice`       | Choose macOS voice      | `--voice Daniel`    |
+| `--speech-rate` | Words per minute        | `--speech-rate 180` |
+| `--no-speak`    | Text output only        | `--no-speak`        |
 
 **Example with options:**
 
@@ -213,28 +215,28 @@ flowchart TB
     subgraph Daily["📅 Daily"]
         L[Dig: Find records]
     end
-    
+
     subgraph Periodic["🔄 When Collection Changes"]
         S[Crate: Sync from Discogs]
         O[File: Organize shelves]
         S --> O
     end
-    
+
     subgraph Setup["⚙️ One-time Setup"]
         SE[seed: Load configuration]
     end
-    
+
     Setup -.-> Periodic
     Periodic -.-> Daily
 ```
 
-| Phase | Command |
-|-------|---------|
-| **Crate** — Sync | `discollection sync` |
-| **File** — Organize | `discollection organize <output.json>` |
-| **Dig** — Locate (text) | `discollection locate <collection.json> "query"` |
-| **Dig** — Locate (voice) | `discollection locate <collection.json>` |
-| Override categorization | `discollection release-override <id> "value"` |
+| Phase                    | Command                                          |
+| ------------------------ | ------------------------------------------------ |
+| **Crate** — Sync         | `discollection sync`                             |
+| **File** — Organize      | `discollection organize <output.json>`           |
+| **Dig** — Locate (text)  | `discollection locate <collection.json> "query"` |
+| **Dig** — Locate (voice) | `discollection locate <collection.json>`         |
+| Override categorization  | `discollection release-override <id> "value"`    |
 
 ---
 

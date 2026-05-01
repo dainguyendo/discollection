@@ -2,8 +2,11 @@
   "name": "discollection-db",
   "version": "1.0.0",
   "description": "Database package for discollection using Drizzle and SQLite",
-  "type": "module",
   "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -16,17 +19,16 @@
       "import": "./dist/schema.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "build:watch": "tsup --watch",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "format": "prettier . --check",
-    "format:fix": "prettier . --write"
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --check .",
+    "format:fix": "oxfmt ."
   },
   "dependencies": {
     "better-sqlite3": "^11.7.2",
@@ -37,7 +39,6 @@
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^22.0.0",
     "drizzle-kit": "^0.30.4",
-    "prettier": "3.3.3",
     "tsup": "^8.2.4",
     "typescript": "^6.0.3"
   },

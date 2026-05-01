@@ -85,8 +85,9 @@ vi.mock("../utilities/organize", () => ({
 }));
 
 vi.mock("../utilities/release", () => ({
-  getReleasePrimaryArtist: (release: { basic_information: { artists?: Array<{ name: string }> } }) =>
-    release.basic_information.artists?.[0]?.name,
+  getReleasePrimaryArtist: (release: {
+    basic_information: { artists?: Array<{ name: string }> };
+  }) => release.basic_information.artists?.[0]?.name,
 }));
 
 vi.mock("../speech/whisper", () => ({

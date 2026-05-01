@@ -1,9 +1,9 @@
 "use client";
 
-import { Collection } from "@/lib/types";
 import { sanitizeKey } from "@/lib/layoutAlgorithms";
-import { useCollectionStore } from "@/state/collection";
+import { Collection } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useCollectionStore } from "@/state/collection";
 
 interface Props {
   data: Collection;
@@ -28,9 +28,10 @@ function TreeItem({
 
   return (
     <div>
-      <div
+      <button
+        type="button"
         className={cn(
-          "flex items-center gap-1 rounded px-2 py-1 text-sm hover:bg-accent cursor-pointer select-none",
+          "flex w-full items-center gap-1 rounded px-2 py-1 text-sm hover:bg-accent cursor-pointer select-none text-left",
           depth === 0 && "font-semibold",
         )}
         style={{ paddingLeft: `${8 + depth * 12}px` }}
@@ -39,11 +40,9 @@ function TreeItem({
         <span className="w-3 shrink-0" />
         <span className="truncate">{label}</span>
         {count !== undefined && (
-          <span className="ml-auto pl-2 text-xs text-muted-foreground shrink-0">
-            {count}
-          </span>
+          <span className="ml-auto pl-2 text-xs text-muted-foreground shrink-0">{count}</span>
         )}
-      </div>
+      </button>
       {hasChildren && <div>{children}</div>}
     </div>
   );
@@ -55,7 +54,7 @@ export const FormatTree = ({ data }: Props) => {
   return (
     <div className="max-h-96 min-w-48 overflow-y-auto py-1">
       {Object.entries(data)
-        .sort(([a], [b]) => Number(b) - Number(a))
+        .toSorted(([a], [b]) => Number(b) - Number(a))
         .map(([formatKey, formatData]) => {
           const formatNodeId = `format-${sanitizeKey(formatKey)}`;
 

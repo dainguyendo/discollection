@@ -16,8 +16,7 @@ export function getReleaseTitleAndArtist(release: Release): string {
 }
 
 export function getReleaseFormat(release: Release): ReleaseFormat {
-  const descriptions =
-    release.basic_information.formats?.[0]?.descriptions ?? [];
+  const descriptions = release.basic_information.formats?.[0]?.descriptions ?? [];
 
   const twelveRegex = /\b12\b/;
   const tenRegex = /\b10\b/;

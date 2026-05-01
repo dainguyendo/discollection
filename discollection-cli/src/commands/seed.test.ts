@@ -91,9 +91,7 @@ describe("seedAction", () => {
 
     expect(mocks.tx.delete).toHaveBeenCalledWith(mocks.schema.releaseOverrides);
     expect(mocks.tx.delete).toHaveBeenCalledWith(mocks.schema.configSubgroups);
-    expect(mocks.tx.delete).toHaveBeenCalledWith(
-      mocks.schema.configConsolidations,
-    );
+    expect(mocks.tx.delete).toHaveBeenCalledWith(mocks.schema.configConsolidations);
 
     expect(mocks.tx.insert).toHaveBeenCalledWith(mocks.schema.releaseOverrides);
     expect(mocks.insertValues).toHaveBeenCalledWith([
@@ -104,20 +102,13 @@ describe("seedAction", () => {
     expect(mocks.tx.insert).toHaveBeenCalledWith(mocks.schema.configSubgroups);
     expect(mocks.insertValues).toHaveBeenCalledWith([{ genre: "Rock" }]);
 
-    expect(mocks.tx.insert).toHaveBeenCalledWith(
-      mocks.schema.configConsolidations,
-    );
-    expect(mocks.insertValues).toHaveBeenCalledWith([
-      { style: "Hard Rock", value: "Rock" },
-    ]);
+    expect(mocks.tx.insert).toHaveBeenCalledWith(mocks.schema.configConsolidations);
+    expect(mocks.insertValues).toHaveBeenCalledWith([{ style: "Hard Rock", value: "Rock" }]);
 
-    expect(mocks.logger.info).toHaveBeenCalledWith(
-      "Seeded organize configuration",
-      {
-        releaseOverrides: 2,
-        subgroups: 1,
-        consolidations: 1,
-      },
-    );
+    expect(mocks.logger.info).toHaveBeenCalledWith("Seeded organize configuration", {
+      releaseOverrides: 2,
+      subgroups: 1,
+      consolidations: 1,
+    });
   });
 });

@@ -1,12 +1,14 @@
-import { useCollectionStore } from "@/state/collection";
-import { sanitizeKey } from "@/lib/layoutAlgorithms";
-import { Release } from "@/lib/types";
 import Fuse from "fuse.js";
 import { X } from "lucide-react";
 import React from "react";
+
+import { sanitizeKey } from "@/lib/layoutAlgorithms";
+import { Release } from "@/lib/types";
+import { getReleaseArtist, getReleaseLabel } from "@/lib/utils";
+import { useCollectionStore } from "@/state/collection";
+
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { getReleaseArtist, getReleaseLabel } from "@/lib/utils";
 
 interface SearchableRelease {
   id: number;
@@ -38,20 +40,18 @@ export const CollectionSearch = () => {
             nodeId: `release-${release.basic_information.id}-${sectionId}`,
           }));
         } else {
-          return Object.entries(genreValue).flatMap(
-            ([style, styleReleases]) => {
-              const sectionId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}-${sanitizeKey(style)}`;
-              return (styleReleases as Release[]).map((release: Release) => ({
-                id: release.basic_information.id,
-                title: release.basic_information.title,
-                artist: getReleaseArtist(release),
-                labels: getReleaseLabel(release),
-                genres: release.basic_information.genres,
-                styles: release.basic_information.styles,
-                nodeId: `release-${release.basic_information.id}-${sectionId}`,
-              }));
-            },
-          );
+          return Object.entries(genreValue).flatMap(([style, styleReleases]) => {
+            const sectionId = `section-${sanitizeKey(formatKey)}-${sanitizeKey(genre)}-${sanitizeKey(style)}`;
+            return (styleReleases as Release[]).map((release: Release) => ({
+              id: release.basic_information.id,
+              title: release.basic_information.title,
+              artist: getReleaseArtist(release),
+              labels: getReleaseLabel(release),
+              genres: release.basic_information.genres,
+              styles: release.basic_information.styles,
+              nodeId: `release-${release.basic_information.id}-${sectionId}`,
+            }));
+          });
         }
       }),
     );

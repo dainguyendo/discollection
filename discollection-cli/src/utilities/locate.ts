@@ -30,9 +30,7 @@ function buildSectionEntries(
   genre: string,
   style?: string,
 ): LocatedRelease[] {
-  const sectionLabel = style
-    ? `${format} > ${genre} > ${style}`
-    : `${format} > ${genre}`;
+  const sectionLabel = style ? `${format} > ${genre} > ${style}` : `${format} > ${genre}`;
 
   return releases.map((release, index) => ({
     release,
@@ -49,9 +47,7 @@ function buildSectionEntries(
   }));
 }
 
-export function buildLocatedReleases(
-  library: OrganizedLibrary,
-): LocatedRelease[] {
+export function buildLocatedReleases(library: OrganizedLibrary): LocatedRelease[] {
   const located: LocatedRelease[] = [];
 
   for (const [format, genreGrouping] of Object.entries(library)) {
@@ -62,9 +58,7 @@ export function buildLocatedReleases(
       }
 
       for (const [style, styleReleases] of Object.entries(grouped)) {
-        located.push(
-          ...buildSectionEntries(styleReleases, format, genre, style),
-        );
+        located.push(...buildSectionEntries(styleReleases, format, genre, style));
       }
     }
   }
