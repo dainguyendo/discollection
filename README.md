@@ -57,7 +57,7 @@ export DISCOLLECTION_DB_PATH="./tmp/discollection.db"
 pnpm --filter discollection dev sync
 pnpm --filter discollection dev seed --config /absolute/path/to/config.discollection.json
 pnpm --filter discollection dev organize ./tmp/organized.json
-pnpm --filter discollection dev locate ./tmp/organized.json --once --voice Daniel --speech-rate 200
+pnpm --filter discollection dev locate --collection ./tmp/organized.json --once --voice Daniel --speech-rate 200
 ```
 
 Voice capture mode for `locate` requires `ffmpeg`, `whisper-cli`, and a local Whisper model. Text queries can run without those dependencies. See the CLI README for setup details.

@@ -11,17 +11,24 @@
 ## Text Search
 
 ```bash
-discollection locate ./my-collection.json "Kind of Blue"
+# Using database (organizes fresh)
+discollection locate "Kind of Blue"
+
+# Using existing collection file
+discollection locate "Kind of Blue" --collection ./my-collection.json
 ```
 
 ## Voice Search
 
 ```bash
 # Continuous mode (say "stop listening" to exit)
-discollection locate ./my-collection.json
+discollection locate
 
 # Single query mode
-discollection locate ./my-collection.json --once
+discollection locate --once
+
+# With collection file
+discollection locate --collection ./my-collection.json --once
 ```
 
 ## Reading the Result
@@ -41,6 +48,7 @@ Between: A Love Supreme | Brilliant Corners
 
 | Option | What it does |
 |--------|--------------|
+| `--collection <path>` | Use existing organized JSON |
 | `--voice Samantha` | Change speaking voice |
 | `--speech-rate 180` | Slower/faster speech |
 | `--no-speak` | Text output only |
@@ -49,5 +57,5 @@ Between: A Love Supreme | Brilliant Corners
 ## Example
 
 ```bash
-discollection locate ./my-collection.json --voice Daniel --speech-rate 200 --once
+discollection locate --voice Daniel --speech-rate 200 --once
 ```

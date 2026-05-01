@@ -4,7 +4,11 @@ import logger from "../logger";
 import type { Release } from "../types";
 import { buildLocatedReleases, type LocatedRelease } from "../utilities/locate";
 import { createLocateSearcher } from "../utilities/locate-search";
-import type { OrganizedLibrary } from "../utilities/organize";
+import {
+  buildOrganizedLibrary,
+  loadOrganizeDataFromDb,
+  type OrganizedLibrary,
+} from "../utilities/organize";
 import { getReleasePrimaryArtist } from "../utilities/release";
 import {
   canUseWhisperVoiceMode,
@@ -14,6 +18,7 @@ import {
 import { speakWithMacosSay } from "../speech/macos-say";
 
 type LocateOptions = {
+  collection?: string;
   lang?: string;
   speak?: boolean;
   voice?: string;
@@ -40,6 +45,19 @@ function loadOrganizedCollectionFromFile(
   }
 
   return parsed;
+}
+
+function loadOrganizedCollectionFromDb(): OrganizedLibrary {
+  const { collection, overrides, dbConfig } = loadOrganizeDataFromDb();
+
+  logger.info("Organizing collection from database", { total: collection.length });
+
+  return buildOrganizedLibrary(collection, {
+    subgroup: dbConfig.subgroup,
+    consolidate: dbConfig.consolidate,
+    genre: overrides.genre,
+    style: overrides.style,
+  });
 }
 
 function releaseLabel(release: Release): string {
@@ -124,13 +142,14 @@ async function getQueryFromVoice(
 }
 
 export const locateAction = async (
-  collectionPath: string,
   queryArg: string | undefined,
   options: LocateOptions,
 ) => {
-  logger.info("Starting locate session", { collectionPath, options });
+  logger.info("Starting locate session", { collection: options.collection, options });
 
-  const organized = loadOrganizedCollectionFromFile(collectionPath);
+  const organized = options.collection
+    ? loadOrganizedCollectionFromFile(options.collection)
+    : loadOrganizedCollectionFromDb();
   const located = buildLocatedReleases(organized);
   const searcher = createLocateSearcher(located);
   const stopPhrase = (options.stopPhrase ?? "stop listening").toLowerCase();
