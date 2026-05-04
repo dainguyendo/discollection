@@ -34,5 +34,11 @@
     "!(pnpm-lock).{json,jsonc,md,yaml,yml,css,scss,html}": [
       "oxfmt"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.14",
+      "@types/react-dom": "19.2.3"
+    }
   }
 }
