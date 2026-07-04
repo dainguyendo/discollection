@@ -34,5 +34,6 @@
     "!(pnpm-lock).{json,jsonc,md,yaml,yml,css,scss,html}": [
       "oxfmt"
     ]
-  }
+  },
+  "packageManager": "pnpm@11.9.0"
 }
