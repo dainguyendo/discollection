@@ -34,9 +34,10 @@ function ReleaseNodeComponent({ data }: ReleaseNodeProps) {
   const discogs = new URL(String(id), "https://www.discogs.com/release/").toString();
 
   const handleBadgeClick = async (value: string) => {
-    const command = `discollection release-override ${id} ${value}`;
+    const quotedValue = JSON.stringify(value);
+    const command = `discollection release-override ${id} ${quotedValue}`;
     await navigator.clipboard.writeText(command);
-    toast.success(`Copied to clipboard`, {
+    toast.success(`Copied`, {
       description: <code className="px-2 py-1 rounded text-xs font-mono">{command}</code>,
     });
   };
