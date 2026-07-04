@@ -6,3 +6,10 @@ packages:
   - "!node_modules"
   - "!.git"
   - "!dist"
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+  sharp: true
+overrides:
+  "@types/react": 19.2.14
+  "@types/react-dom": 19.2.3
