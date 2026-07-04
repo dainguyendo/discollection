@@ -87,6 +87,17 @@ describe("releaseOverrideAction", () => {
     expect(mocks.run).toHaveBeenCalledTimes(1);
   });
 
+  it("infers genre override for Discogs 'Hip Hop' genre", async () => {
+    const { releaseOverrideAction } = await import("./release-override");
+    releaseOverrideAction("789", "Hip Hop");
+
+    expect(mocks.values).toHaveBeenCalledWith({
+      releaseId: 789,
+      overrideType: "genre",
+      value: "Hip Hop",
+    });
+  });
+
   it("infers style override when value is not official genre", async () => {
     const { releaseOverrideAction } = await import("./release-override");
     releaseOverrideAction("456", "Hard Rock");

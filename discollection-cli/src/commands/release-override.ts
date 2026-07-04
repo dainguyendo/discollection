@@ -6,28 +6,38 @@ const DISCOGS_GENRE_GUIDELINE_URL =
   "https://support.discogs.com/hc/en-us/articles/360005055213-Database-Guidelines-9-Genres-Styles";
 
 // Implementation detail: official Discogs genres from the guideline above.
-const OFFICIAL_DISCOGS_GENRES = new Set([
-  "blues",
-  "brass & military",
-  "children's",
-  "classical",
-  "electronic",
-  "folk, world, & country",
-  "funk / soul",
-  "hip-hop",
-  "jazz",
-  "latin",
-  "non-music",
-  "pop",
-  "reggae",
-  "rock",
-  "stage & screen",
-]);
+const OFFICIAL_DISCOGS_GENRES = new Set(
+  [
+    "blues",
+    "brass & military",
+    "children's",
+    "classical",
+    "electronic",
+    "folk, world, & country",
+    "funk / soul",
+    "hip-hop",
+    "jazz",
+    "latin",
+    "non-music",
+    "pop",
+    "reggae",
+    "rock",
+    "stage & screen",
+  ].map(normalizeGenreValue),
+);
 
 type OverrideType = "genre" | "style";
 
+function normalizeGenreValue(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
 function inferOverrideType(value: string): OverrideType {
-  const normalized = value.trim().toLowerCase();
+  const normalized = normalizeGenreValue(value);
   return OFFICIAL_DISCOGS_GENRES.has(normalized) ? "genre" : "style";
 }
 
