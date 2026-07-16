@@ -24,7 +24,7 @@ const api = ky.extend({
 export async function list(): Promise<GetReleasesResponse["releases"]> {
   let releases: Array<Release> = [];
 
-  let url = `https://api.discogs.com/users/${user}/collection/folders/${folder}/releases`;
+  let url = `https://api.discogs.com/users/${user}/collection/folders/${folder}/releases?per_page=100`;
 
   try {
     do {
@@ -34,7 +34,9 @@ export async function list(): Promise<GetReleasesResponse["releases"]> {
 
       logger.info("Fetched page of collection", { pagination });
 
-      url = pagination?.urls?.next;
+      url = pagination?.urls?.next
+        ? `${pagination.urls.next}${pagination.urls.next.includes("?") ? "&" : "?"}per_page=100`
+        : undefined;
 
       releases.push(...pageReleases);
 
