@@ -35,7 +35,10 @@ describe("api.list", () => {
     get
       .mockResolvedValueOnce({
         json: async () => ({
-          pagination: { page: 1, urls: { next: "next-url" } },
+          pagination: {
+            page: 1,
+            urls: { next: "https://api.discogs.com/next" },
+          },
           releases: [{ id: 1 }],
         }),
       })
@@ -51,6 +54,11 @@ describe("api.list", () => {
 
     expect(extend).toHaveBeenCalledTimes(1);
     expect(get).toHaveBeenCalledTimes(2);
+    expect(get).toHaveBeenNthCalledWith(
+      1,
+      "https://api.discogs.com/users/user/collection/folders/0/releases?per_page=100",
+    );
+    expect(get).toHaveBeenNthCalledWith(2, "https://api.discogs.com/next?per_page=100");
     expect(result).toEqual([{ id: 1 }, { id: 2 }]);
   });
 
