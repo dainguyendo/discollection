@@ -38,11 +38,24 @@ export type Release = {
   notes: Array<{ field_id: number; value: string }>;
 };
 
+export type Pagination = {
+  page: number;
+  pages: number;
+  per_page: number;
+  items: number;
+  urls: {
+    last?: string;
+    next?: string;
+    first?: string;
+  };
+};
+
 /**
  * @link https://github.com/lionralfs/discogs-client/blob/77a139c3b3f025316c942f5c7ea97157f7bc75e3/lib/collection.ts#L35
  */
 export type GetReleasesResponse = {
   releases: Array<Release>;
+  pagination: Pagination;
 };
 
 export type Configuration = {
