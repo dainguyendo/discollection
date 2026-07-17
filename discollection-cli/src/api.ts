@@ -21,10 +21,17 @@ const api = ky.extend({
   },
 });
 
+function withPerPage(url: URL): string {
+  url.searchParams.set("per_page", "100");
+  return url.toString();
+}
+
 export async function list(): Promise<GetReleasesResponse["releases"]> {
   let releases: Array<Release> = [];
 
-  let url = `https://api.discogs.com/users/${user}/collection/folders/${folder}/releases?per_page=100`;
+  let url: string | undefined = withPerPage(
+    new URL(`https://api.discogs.com/users/${user}/collection/folders/${folder}/releases`),
+  );
 
   try {
     do {
@@ -34,9 +41,7 @@ export async function list(): Promise<GetReleasesResponse["releases"]> {
 
       logger.info("Fetched page of collection", { pagination });
 
-      url = pagination?.urls?.next
-        ? `${pagination.urls.next}${pagination.urls.next.includes("?") ? "&" : "?"}per_page=100`
-        : undefined;
+      url = pagination?.urls?.next ? withPerPage(new URL(pagination.urls.next)) : undefined;
 
       releases.push(...pageReleases);
 
